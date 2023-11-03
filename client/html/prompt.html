@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0"/>
+    <meta name="description" content="A conversational AI system that listens, learns, and challenges"/>
+    <meta property="og:title" content="ChatGPT"/>
+    <meta property="og:image" content="https://openai.com/content/images/2022/11/ChatGPT.jpg"/>
+    <meta
+            property="og:description"
+            content="A conversational AI system that listens, learns, and challenges"/>
+    <meta property="og:url" content="https://chat.acy.dev"/>
+    <link rel="stylesheet" href="{{ url_for('bp.static', filename='css/style.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('bp.static', filename='semantic/semantic.min.css') }}"/>
+    <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="{{ url_for('bp.static', filename='img/apple-touch-icon.png') }}"/>
+    <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="{{ url_for('bp.static', filename='img/favicon-32x32.png') }}"/>
+    <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="{{ url_for('bp.static', filename='img/favicon-16x16.png') }}"/>
+    <link rel="manifest" href="{{ url_for('bp.static', filename='img/site.webmanifest') }}"/>
+    <script src="{{ url_for('bp.static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('bp.static', filename='semantic/semantic.min.js') }}"></script>
+    <link
+            rel="stylesheet"
+            href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/styles/base16/dracula.min.css"/>
+    <title>FreeGPT--Prompt</title>
+</head>
+
+<body data-urlprefix="{{ url_prefix }}">
+<div class="main-container">
+    <div class="ui one column stackable grid">
+        <div class="column">
+            <div class="ui selection dropdown level">
+                <input name="level" type="hidden" value="">
+                <i class="dropdown icon"></i>
+                <div class="default text">Level1</div>
+                <div class="menu">
+                    <div class="item" data-value="Level0">Level0</div>
+                    <div class="item" data-value="Level1">Level1</div>
+                    <div class="item" data-value="Level2">Level2</div>
+                    <div class="item" data-value="Level3">Level3</div>
+                    <div class="item" data-value="Level4">Level4</div>
+                    <div class="item" data-value="Level5">Level5</div>
+                    <div class="item" data-value="Level6">Level6</div>
+                </div>
+            </div>
+            <div class="ui selection dropdown unit">
+                <input name="unit" type="hidden" value="">
+                <i class="dropdown icon"></i>
+                <div class="default text">Unit9</div>
+                <div class="menu">
+                    <div class="item" data-value="Unit1">Unit1</div>
+                    <div class="item" data-value="Unit2">Unit2</div>
+                    <div class="item" data-value="Unit3">Unit3</div>
+                    <div class="item" data-value="Unit4">Unit4</div>
+                    <div class="item" data-value="Unit5">Unit5</div>
+                    <div class="item" data-value="Unit6">Unit6</div>
+                    <div class="item" data-value="Unit7">Unit7</div>
+                    <div class="item" data-value="Unit8">Unit8</div>
+                    <div class="item" data-value="Unit9">Unit9</div>
+                    <div class="item" data-value="Unit10">Unit10</div>
+                    <div class="item" data-value="Unit11">Unit11</div>
+                    <div class="item" data-value="Unit12">Unit12</div>
+                    <div class="item" data-value="Unit13">Unit13</div>
+                    <div class="item" data-value="Unit14">Unit14</div>
+                    <div class="item" data-value="Unit15">Unit15</div>
+                    <div class="item" data-value="Unit16">Unit16</div>
+                    <div class="item" data-value="Unit17">Unit17</div>
+                    <div class="item" data-value="Unit18">Unit18</div>
+                </div>
+            </div>
+            <div class="ui selection dropdown lesson">
+                <input name="lesson" type="hidden" value="">
+                <i class="dropdown icon"></i>
+                <div class="default text">Lesson8</div>
+                <div class="menu">
+                    <div class="item" data-value="Lesson1">Lesson1</div>
+                    <div class="item" data-value="Lesson2">Lesson2</div>
+                    <div class="item" data-value="Lesson3">Lesson3</div>
+                    <div class="item" data-value="Lesson4">Lesson4</div>
+                    <div class="item" data-value="Lesson5">Lesson5</div>
+                    <div class="item" data-value="Lesson6">Lesson6</div>
+                    <div class="item" data-value="Lesson7">Lesson7</div>
+                    <div class="item" data-value="Lesson8">Lesson8</div>
+                </div>
+            </div>
+            <div class="ui divider"></div>
+            <div class="ui labeled input">
+                <a class="ui label">
+                    Topic
+                </a>
+                <input type="text" size="30" placeholder="Special Days" name="topic">
+            </div>
+            <div class="ui labeled input">
+                <a class="ui label">
+                    Title
+                </a>
+                <input type="text" size="30" placeholder="Gifts for Parents" name="title">
+            </div>
+            <div class="ui divider"></div>
+            <div class="ui labeled input">
+                <a class="ui label">
+                    Words
+                </a>
+                <input type="text" size="100" placeholder="card|every|father|mother|sometimes|parent" name="words">
+            </div>
+            <div class="ui divider"></div>
+            <div class="ui labeled input">
+                <a class="ui label">
+                    Sentence
+                </a>
+                <input type="text" size="100" placeholder="Sometimes I give him a card.|I just give him a hug"
+                       name="sentence">
+            </div>
+            <div class="ui divider"></div>
+            <div class="ui ignored warning message">
+                <p><b>Example:</b> Learning Level1-Unit9-Lesson8, learning about the topic of "Special Days", with the title "Gifts for Parents", with the keywords being "card|every|father|mother|sometimes|parent", and the key sentences are "Sometimes I give him a card.|I just give him a hug".</p>
+            </div>
+            <button class="ui primary button get_prompt">
+                Prompt生成
+            </button>
+            <div class="ui divider"></div>
+            <div class="ui ignored info message prompt">
+                <p></p>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="menu-button">
+    <i class="fa-solid fa-bars"></i>
+</div>
+
+<!-- scripts -->
+<script>
+    window.conversation_id = "{{ chat_id }}";
+
+    $(function () {
+        // 下拉列表
+        $('.ui.level').dropdown();
+        $('.ui.unit').dropdown();
+        $('.ui.lesson').dropdown();
+        // md5
+        $(".get_prompt").click(function () {
+
+            var level = $("input[name=level]").val();
+            var unit = $("input[name=unit]").val();
+            var lesson = $("input[name=lesson]").val();
+            var topic = $("input[name=topic]").val();
+            var title = $("input[name=title]").val();
+            if (level === "" || unit === "" || lesson === "" || topic === "" || title === "") {
+                alert("level、unit、lesson、topic、title不能为空");
+                return;
+            }
+            level_unit_lesson = level + "-" + unit + "-" + lesson
+            prompt_text = "Learning " + level_unit_lesson + ", learning about the topic of \"" + topic + "\", with the title \"" + title + "\"";
+            var words = $("input[name=words]").val();
+            if (words !== "") {
+                prompt_text += ", with the keywords being \"" + words + "\","
+            }
+            var sentence = $("input[name=sentence]").val();
+            if (sentence !== "") {
+                prompt_text += " and the key sentences are \"" + sentence + "\"."
+            }
+            $(".prompt p").html(prompt_text);
+
+        });
+    });
+</script>
+<script src="{{ url_for('bp.static', filename='js/icons.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/markdown-it@latest/dist/markdown-it.min.js"></script>
+</body>
+</html>
