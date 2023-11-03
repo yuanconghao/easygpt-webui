@@ -1,4 +1,5 @@
 import re
+import os
 from datetime import datetime
 from flask import request, Response, stream_with_context
 from requests import get
@@ -52,7 +53,8 @@ class Backend_Api:
             stream = request.json["meta"]["content"]["internet_access"]
 
             # Generate response
-            openai.api_key = "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"
+            openai.api_key = os.environ.get("OPENAI_API_KEY_EASY")
+            print(openai.api_key)
             response = openai.ChatCompletion.create(
                 model=model,
                 messages=messages,
