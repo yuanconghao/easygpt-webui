@@ -51,7 +51,7 @@ class Website:
 
     def _prompt(self):
         print("prompt=========")
-        return render_template('prompt.html', url_prefix=self.url_prefix)
+        return render_template('prompt1.html', url_prefix=self.url_prefix)
 
     def change_language(self):
         data = request.get_json()
