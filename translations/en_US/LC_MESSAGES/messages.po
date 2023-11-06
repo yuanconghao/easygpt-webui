@@ -24,6 +24,9 @@ msgstr "New Conversation"
 msgid "Clear Conversations"
 msgstr "Clear Conversations"
 
+msgid "Prompt"
+msgstr "Prompt"
+
 #:
 msgid "API Key"
 msgstr "API Key"

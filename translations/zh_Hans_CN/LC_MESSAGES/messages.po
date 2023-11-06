@@ -25,6 +25,9 @@ msgstr "新的对话"
 msgid "Clear Conversations"
 msgstr "清空对话"
 
+msgid "Prompt"
+msgstr "生成Prompt"
+
 #:
 msgid "API Key"
 msgstr "API密钥"

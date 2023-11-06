@@ -30,6 +30,9 @@ msgstr ""
 msgid "Clear Conversations"
 msgstr ""
 
+msgid "Prompt"
+msgstr ""
+
 #: client/html/index.html:54
 msgid "API Key"
 msgstr ""
