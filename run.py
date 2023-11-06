@@ -3,7 +3,7 @@ import secrets
 from server.bp import bp
 from server.website import Website
 from server.backend import Backend_Api
-from server.babel import create_babel
+#from server.babel import create_babel
 from json import load
 from flask import Flask
 
@@ -19,7 +19,7 @@ if __name__ == '__main__':
     app.secret_key = secrets.token_hex(16)
 
     # Set up Babel
-    create_babel(app)
+    #create_babel(app)
 
     # Set up the website routes
     site = Website(bp, url_prefix)
