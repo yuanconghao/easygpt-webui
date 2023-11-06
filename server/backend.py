@@ -59,7 +59,7 @@ class Backend_Api:
                 model=model,
                 messages=messages,
                 temperature=0,
-                max_tokens=1000,
+                max_tokens=2048,
                 stream=stream,
             )
 
