@@ -55,7 +55,7 @@ class Backend_Api:
             # Generate response
             openai.api_key = os.environ.get("OPENAI_API_KEY_EASY")
             print(openai.api_key)
-            response = openai.ChatCompletion.create(
+            response = openai.chat.completions.create(
                 model=model,
                 messages=messages,
                 temperature=0.5,
