@@ -58,7 +58,7 @@ class Backend_Api:
             response = openai.ChatCompletion.create(
                 model=model,
                 messages=messages,
-                temperature=0,
+                temperature=0.5,
                 max_tokens=2048,
                 stream=stream,
             )
