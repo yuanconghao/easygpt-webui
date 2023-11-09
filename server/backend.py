@@ -163,7 +163,7 @@ def compact_response(response: Union[dict, Generator]) -> Response:
         def generate() -> Generator:
             try:
                 for chunk in response:
-                    print(chunk)
+                    # print(chunk)
                     # 假设chunk是流式API返回的数据结构
                     # 你可能需要根据实际的数据结构进行调整
                     if chunk.choices[0].finish_reason != 'stop':
