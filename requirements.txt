@@ -21,4 +21,7 @@ retrying
 numpy>=1.22.2 # pinned to avoid a vulnerability
 tornado>=6.3.2 # pinned to avoid a vulnerability
 PyExecJS
-openai==0.28.1
+openai
+transformers
+torch
+peft

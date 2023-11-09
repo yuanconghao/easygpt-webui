@@ -1,13 +1,15 @@
 import re
 import os
+import io
 from datetime import datetime
-from flask import request, Response, stream_with_context
+from flask import request, Response, stream_with_context, send_file
 from requests import get
 from server.config import special_instructions
 import openai
 import json
 import logging
 from typing import Generator, Union
+import time
 
 
 class Backend_Api:
@@ -23,26 +25,47 @@ class Backend_Api:
                 'function': self._conversation,
                 'methods': ['POST']
             },
+            '/backend-api/v2/generate_tts': {
+                'function': self._generate_tts,
+                'methods': ['POST']
+            },
         }
 
-    def _get_prompt(self):
-        pass
+    def _generate_tts(self):
+        print(request.json)
+        text = request.json['text']
+        voice = request.json['voice']
+        print(text)
+        time1 = time.time()
+        response = openai.audio.speech.create(
+            model="tts-1",
+            voice=voice,
+            input=text.strip(),
+        )
+
+        # Convert the binary response content to a byte stream
+        byte_stream = io.BytesIO(response.content)
+        byte_stream.name = 'audio.mp3'
+        time2 = time.time()
+        cost = time2 - time1
+        character_num = len(text)
+        info = {
+            "cost": cost,
+            "c_nums": character_num,
+        }
+        print(info)
+        return send_file(byte_stream, mimetype='audio/mp3')
 
     def _conversation(self):
-        """  
-        Handles the conversation route.  
+        """
+        Handles the conversation route.
 
-        :return: Response object containing the generated conversation stream  
+        :return: Response object containing the generated conversation stream
         """
         conversation_id = request.json['conversation_id']
 
         try:
-            api_key = request.json['api_key']
-            print(api_key)
-            jailbreak = request.json['jailbreak']
             model = request.json['model']
-            print("=================")
-            # messages = build_messages(jailbreak)
             print(request.json)
             conversation = request.json['meta']['content']['conversation']
             prompt = request.json['meta']['content']['parts'][0]
@@ -55,6 +78,56 @@ class Backend_Api:
             # Generate response
             openai.api_key = os.environ.get("OPENAI_API_KEY_EASY")
             print(openai.api_key)
+
+            response = openai.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=0.5,
+                max_tokens=4096,
+                stream=stream,
+            )
+            print("response==================")
+            print(response)
+            if stream:
+                return compact_response(response)
+
+            answer = response.choices[0].message.content
+            return Response(answer)
+
+        except Exception as e:
+            print(e)
+            print(e.__traceback__.tb_next)
+
+            return {
+                       '_action': '_ask',
+                       'success': False,
+                       "error": f"an error occurred {str(e)}"
+                   }, 400
+
+    def _conversation1(self):
+        """  
+        Handles the conversation route.  
+
+        :return: Response object containing the generated conversation stream  
+        """
+        conversation_id = request.json['conversation_id']
+
+        try:
+            model = request.json['model']
+
+            print(request.json)
+            conversation = request.json['meta']['content']['conversation']
+            prompt = request.json['meta']['content']['parts'][0]
+            conversation.append(prompt)
+            messages = conversation
+            print("=================")
+            print("messages:", messages)
+            stream = request.json["meta"]["content"]["internet_access"]
+
+            # Generate response
+            openai.api_key = os.environ.get("OPENAI_API_KEY_EASY")
+            print(openai.api_key)
+
             response = openai.ChatCompletion.create(
                 model=model,
                 messages=messages,
@@ -62,10 +135,10 @@ class Backend_Api:
                 max_tokens=2048,
                 stream=stream,
             )
-
+            print("response==================")
             print(response)
             if stream:
-                return compact_response(response)
+                return compact_response1(response)
 
             answer = response["choices"][0]["message"]["content"]
             return Response(answer)
@@ -82,6 +155,28 @@ class Backend_Api:
 
 
 def compact_response(response: Union[dict, Generator]) -> Response:
+    if isinstance(response, dict):
+        # 如果响应是一个字典，直接返回JSON响应
+        return Response(response=json.dumps(response), status=200, mimetype='application/json')
+    else:
+        # 如果响应是一个生成器，创建并返回一个流式响应
+        def generate() -> Generator:
+            try:
+                for chunk in response:
+                    print(chunk)
+                    # 假设chunk是流式API返回的数据结构
+                    # 你可能需要根据实际的数据结构进行调整
+                    if chunk.choices[0].finish_reason != 'stop':
+                        yield chunk.choices[0].delta.content
+            except Exception:
+                # 在生产环境中，应使用日志记录此类错误
+                logging.exception("internal server error.")
+
+        # 使用stream_with_context确保请求上下文在流生成期间保持激活
+        return Response(stream_with_context(generate()), status=200, mimetype='text/event-stream')
+
+
+def compact_response1(response: Union[dict, Generator]) -> Response:
     if isinstance(response, dict):
         # 如果响应是一个字典，直接返回JSON响应
         return Response(response=json.dumps(response), status=200, mimetype='application/json')

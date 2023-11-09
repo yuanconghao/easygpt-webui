@@ -26,6 +26,10 @@ class Website:
                 'function': self._prompt,
                 'methods': ['GET', 'POST']
             },
+            '/tts/': {
+                'function': self._tts,
+                'methods': ['GET', 'POST']
+            },
             '/change-language': {
                 'function': self.change_language,
                 'methods': ['POST']
@@ -52,6 +56,10 @@ class Website:
     def _prompt(self):
         print("prompt=========")
         return render_template('prompt1.html', url_prefix=self.url_prefix)
+
+    def _tts(self):
+        print("tts=========")
+        return render_template('tts.html', url_prefix=self.url_prefix)
 
     def change_language(self):
         data = request.get_json()

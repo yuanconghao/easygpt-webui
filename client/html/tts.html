@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0"/>
+    <meta name="description" content="A conversational AI system that listens, learns, and challenges"/>
+    <meta property="og:title" content="ChatGPT"/>
+    <meta property="og:image" content="https://openai.com/content/images/2022/11/ChatGPT.jpg"/>
+    <meta
+            property="og:description"
+            content="A conversational AI system that listens, learns, and challenges"/>
+    <meta property="og:url" content="https://chat.acy.dev"/>
+    {#    <link rel="stylesheet" href="{{ url_for('bp.static', filename='css/style.css') }}"/>#}
+    <link rel="stylesheet" href="{{ url_for('bp.static', filename='semantic/semantic.min.css') }}"/>
+    <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="{{ url_for('bp.static', filename='img/apple-touch-icon.png') }}"/>
+    <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="{{ url_for('bp.static', filename='img/favicon-32x32.png') }}"/>
+    <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="{{ url_for('bp.static', filename='img/favicon-16x16.png') }}"/>
+    <link rel="manifest" href="{{ url_for('bp.static', filename='img/site.webmanifest') }}"/>
+    <script src="{{ url_for('bp.static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('bp.static', filename='semantic/semantic.min.js') }}"></script>
+    <link
+            rel="stylesheet"
+            href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/styles/base16/dracula.min.css"/>
+    <title>FreeGPT--TTS</title>
+</head>
+
+<body data-urlprefix="{{ url_prefix }}">
+<div class="ui container">
+    <br>
+    <div class="ui one wide column">
+        <div class="ui form">
+            <div class="field">
+                <textarea placeholder="I have a dream that my four little children will one day live in a nation where they will not be judged by the color of their skin but by the content of their character." name="txt" rows="15" cols="100"></textarea>
+            </div>
+            <div class="inline fields">
+                <label>Voices</label>
+                <div class="field">
+                    <div class="ui radio checkbox">
+                        <input type="radio" name="voice" checked="checked" value="alloy">
+                        <label>Alloy</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui radio checkbox">
+                        <input type="radio" name="voice" value="echo">
+                        <label>Echo</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui radio checkbox">
+                        <input type="radio" name="voice" value="fable">
+                        <label>Fable</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui radio checkbox">
+                        <input type="radio" name="voice" value="onyx">
+                        <label>Onyx</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui radio checkbox">
+                        <input type="radio" name="voice" value="nova">
+                        <label>Nova</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui radio checkbox">
+                        <input type="radio" name="voice" value="shimmer">
+                        <label>Shimmer</label>
+                    </div>
+                </div>
+            </div>
+            <div class="ui divider"></div>
+
+            <div class="field">
+                <div class="ui primary button get_tts">TTS播放</div>
+            </div>
+            {#            <button class="ui primary button get_tts">#}
+            {#                #}
+            {#            </button>#}
+            <div class="ui divider"></div>
+            <div class="ui ignored info message tts_info">
+                <p></p>
+            </div>
+            <div id="tts_div_id">
+                <audio id="tts_audio_id" autoplay="autoplay">
+                    <source id="tts_source_id" src="" type="audio/mpeg">
+                    <embed id="tts_embed_id" height="0" width="0" src="">
+                </audio>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- scripts -->
+<script>
+    window.conversation_id = "{{ chat_id }}";
+
+    $(function () {
+
+        const url_prefix = document.querySelector("body").getAttribute("data-urlprefix");
+        // md5
+        $(".get_tts").click(function () {
+            var txt = $("textarea[name=txt]").val();
+            var voice = $('input[name="voice"]:checked').val();
+            var startTime = new Date();
+            $(".get_tts").addClass('loading');
+            $.ajax({
+                url: `${url_prefix}/backend-api/v2/generate_tts`,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({text: txt, voice: voice}),
+                processData: false,
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (data) {
+                    var endTime = new Date();
+                    var timeDiff = endTime - startTime; // in ms
+                    timeDiff /= 1000;
+                    var seconds = Math.round(timeDiff);
+                    console.log("jjjjjjjjjjjjjjjjjjjjj");
+                    var new_url = URL.createObjectURL(data);
+                    console.log(new_url);
+                    $('#tts_source_id').attr('src', new_url);
+                    $('#tts_audio_id').get(0).load();
+                    $('#tts_audio_id').get(0).play();
+
+                    info = "role: " + voice + " character length: " + txt.length + " cost: " + seconds + "s";
+                    $(".tts_info p").html(info);
+                    $(".get_tts").removeClass('loading');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX request failed: ", textStatus, errorThrown);
+                }
+            });
+
+
+
+        });
+    });
+</script>
+<script src="{{ url_for('bp.static', filename='js/icons.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/markdown-it@latest/dist/markdown-it.min.js"></script>
+</body>
+</html>
