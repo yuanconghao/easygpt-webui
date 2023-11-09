@@ -83,7 +83,7 @@ class Backend_Api:
                 model=model,
                 messages=messages,
                 temperature=0.5,
-                max_tokens=4096,
+                max_tokens=2048,
                 stream=stream,
             )
             print("response==================")
