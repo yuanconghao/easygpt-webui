@@ -117,20 +117,37 @@ class Backend_Api:
             openai.api_key = os.environ.get("OPENAI_API_KEY_EASY")
             print(openai.api_key)
 
-            response = openai.chat.completions.create(
-                model=model,
-                messages=messages,
-                temperature=0.5,
-                max_tokens=2048,
-                stream=stream,
-            )
-            print("response==================")
-            print(response)
-            if stream:
-                return compact_response(response)
+            if model == "dall-e-3":
+                response = openai.images.generate(
+                    model="dall-e-3",
+                    prompt=prompt['content'],
+                    size="1024x1024",
+                    quality="standard",
+                    n=1,
+                )
+                revised_prompt = response.data[0].revised_prompt
+                image_url = response.data[0].url
+                link_image_url = f"![图片)]({image_url})"
 
-            answer = response.choices[0].message.content
-            return Response(answer)
+                return Response(revised_prompt + "\n\n" + link_image_url)
+
+            elif model == "gpt-4-vision-preview":
+                pass
+            else:
+                response = openai.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    temperature=0.5,
+                    max_tokens=2048,
+                    stream=stream,
+                )
+                print("response==================")
+                print(response)
+                if stream:
+                    return compact_response(response)
+
+                answer = response.choices[0].message.content
+                return Response(answer)
 
         except Exception as e:
             print(e)
