@@ -10,6 +10,8 @@ import json
 import logging
 from typing import Generator, Union
 import time
+import tempfile
+from pydub import AudioSegment
 
 
 class Backend_Api:
@@ -29,7 +31,43 @@ class Backend_Api:
                 'function': self._generate_tts,
                 'methods': ['POST']
             },
+            '/backend-api/v2/generate_asr': {
+                'function': self._generate_asr,
+                'methods': ['POST', 'GET']
+            },
         }
+
+    def _generate_asr(self):
+        print(request.args)
+        lang = request.args.get('lang')
+        audio_file = request.files['audio']
+        temp_file = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+        audio_file.save(temp_file.name)
+
+        print(audio_file)
+        print(temp_file.name)
+
+        file_data = open(temp_file.name, "rb")
+        # with open(temp_file.name, 'rb') as f:
+        #     file_data = f.read()
+
+        if lang:
+            print("lang----------------")
+            response = openai.audio.transcriptions.create(
+                model="whisper-1",
+                file=file_data,
+                language=lang
+            )
+        else:
+            print('default----------------')
+            response = openai.audio.transcriptions.create(
+                model="whisper-1",
+                file=file_data,
+            )
+        os.unlink(temp_file.name)
+
+        print(response)
+        return response.text
 
     def _generate_tts(self):
         print(request.json)
@@ -194,6 +232,13 @@ def compact_response1(response: Union[dict, Generator]) -> Response:
 
         # 使用stream_with_context确保请求上下文在流生成期间保持激活
         return Response(stream_with_context(generate()), status=200, mimetype='text/event-stream')
+
+
+def convert_audio_to_wav(file_path):
+    audio = AudioSegment.from_file(file_path)
+    new_file_path = file_path + ".wav"
+    audio.export(new_file_path, format="wav")
+    return new_file_path
 
 
 def build_messages(jailbreak):

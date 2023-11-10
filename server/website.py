@@ -30,6 +30,10 @@ class Website:
                 'function': self._tts,
                 'methods': ['GET', 'POST']
             },
+            '/asr/': {
+                'function': self._asr,
+                'methods': ['GET', 'POST']
+            },
             '/change-language': {
                 'function': self.change_language,
                 'methods': ['POST']
@@ -60,6 +64,10 @@ class Website:
     def _tts(self):
         print("tts=========")
         return render_template('tts.html', url_prefix=self.url_prefix)
+
+    def _asr(self):
+        print("asr=========")
+        return render_template('asr.html', url_prefix=self.url_prefix)
 
     def change_language(self):
         data = request.get_json()

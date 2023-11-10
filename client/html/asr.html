@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0"/>
+    <meta name="description" content="A conversational AI system that listens, learns, and challenges"/>
+    <meta property="og:title" content="ChatGPT"/>
+    <meta property="og:image" content="https://openai.com/content/images/2022/11/ChatGPT.jpg"/>
+    <meta
+            property="og:description"
+            content="A conversational AI system that listens, learns, and challenges"/>
+    <meta property="og:url" content="https://chat.acy.dev"/>
+    {#    <link rel="stylesheet" href="{{ url_for('bp.static', filename='css/style.css') }}"/>#}
+    <link rel="stylesheet" href="{{ url_for('bp.static', filename='semantic/semantic.min.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('bp.static', filename='microphone/microphone.css') }}"/>
+    <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="{{ url_for('bp.static', filename='img/apple-touch-icon.png') }}"/>
+    <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="{{ url_for('bp.static', filename='img/favicon-32x32.png') }}"/>
+    <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="{{ url_for('bp.static', filename='img/favicon-16x16.png') }}"/>
+    <link rel="manifest" href="{{ url_for('bp.static', filename='img/site.webmanifest') }}"/>
+    <script src="{{ url_for('bp.static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('bp.static', filename='semantic/semantic.min.js') }}"></script>
+    <script src="{{ url_for('bp.static', filename='microphone/microphone.js') }}"></script>
+    <script src="{{ url_for('bp.static', filename='microphone/recorder.js') }}"></script>
+    <style>
+        input[type=button] {
+            background: #1AB5FF;
+            color: #fff;
+            border-radius: 6px;
+            font-size: 12px;
+            margin: 10px;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+
+        input[type=button]:hover {
+            background: #0091ff;
+        }
+
+        div {
+            height: 40px;
+        }
+    </style>
+    <title>FreeGPT--ASR</title>
+</head>
+
+<body data-urlprefix="{{ url_prefix }}">
+<div class="ui container">
+    <br>
+    <div class="column">
+        <label>Transcription Language</label>
+        <div class="ui selection dropdown language">
+            <input name="language" type="hidden" value="">
+            <i class="dropdown icon"></i>
+            <div class="default text">Default</div>
+            <div class="menu" style="height: auto;">
+                <div class="item" data-value="en">English</div>
+                <div class="item" data-value="zh">Chinese</div>
+                <div class="item" data-value="ja">Japanese</div>
+                <div class="item" data-value="fr">French</div>
+            </div>
+        </div>
+        <input type="button" value="开始录音" onclick="Start()"/>
+        <input type="button" value="结束录音" onclick="Stop()"/>
+        <div id="len" style="color:#ff6600;display:inline-block;">录音时长：0.00s</div>
+        <div id="loud" style="color:#ff6600;display:inline-block;margin-left:15px;">录音时长：0%</div>
+        <!-- <input type="button" value="播放音频" onclick="Play()" /> -->
+        <!-- <div id="playTime"></div> -->
+        <!-- <div id="playTiem"></div> -->
+        <input type="button" value="下载音频" onclick="download()"/>
+
+    </div>
+
+    <div class="ui one wide column">
+        <div class="ui form">
+            <div class="ui divider"></div>
+            <div class="ui ignored info message asr_message">
+                <p></p>
+            </div>
+        </div>
+        <div class="ui form">
+            <div class="ui divider"></div>
+            <div class="ui ignored positive message asr_info">
+                <p></p>
+            </div>
+        </div>
+        <div class="ui form">
+            <div class="ui divider"></div>
+            <div>
+                <div id="Microphone">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- scripts -->
+<script>
+
+    $(function(){
+        $('.ui.language').dropdown();
+    });
+    var recorder = new Recorder({
+        sampleBits: 16, // 采样位数，支持 8 或 16，默认是16
+        sampleRate: 16000, // 采样率，支持 11025、16000、22050、24000、44100、48000，根据浏览器默认值，我的chrome是48000
+        numChannels: 1, // 声道，支持 1 或 2， 默认是1
+        compiling: false, // 是否边录边转换，默认是false
+    });
+
+    function isIE() { //ie?
+        if (!!window.ActiveXObject || "ActiveXObject" in window)
+            return true;
+        else
+            return false;
+    }
+
+    var Start = function () {
+        if (isIE()) {
+            alert("ie不支持麦克风录音，请更换浏览器！");
+        } else {
+            recorder.start().then(() => {
+                Length();
+                //Loud();
+                // 开始录音
+            }, (error) => {
+                // 出错了
+                console.log(`${error.name} : ${error.message}`);
+            });
+        }
+    }
+    var Stop = function () {
+        recorder.stop();
+
+        {#const blob = new Blob(chunks, {'type': 'audio/ogg; codecs=opus'});#}
+        {#const blob = new Blob(chunks, {'type': 'audio/wav'});#}
+        blob = recorder.getWAVBlob()
+        sendToServer(blob);
+    }
+    var Length = function () {
+        recorder.onprogress = function (params) {
+            var id = document.getElementById("len");
+            id.innerHTML = "录音时长：" + params.duration.toFixed(2);
+            var idx = document.getElementById("loud");
+            idx.innerHTML = "音量大小：" + params.vol.toFixed(0) + "%";
+            microphone.volume("Microphone", params.vol);
+        }
+    }
+    var Play = function () {
+        recorder.play();
+        PlayDur();
+    }
+    var PlayDur = function () {
+        var id = document.getElementById("playTiem");
+        id.innerHTML = "音频总时长" + recorder.duration;
+
+        setInterval(function () {
+            var idx = document.getElementById("playTime");
+            idx.innerHTML = "播放进度" + recorder.getPlayTime();
+        }, 1000)
+
+    }
+    var download = function () {
+        recorder.downloadWAV("audio");
+    }
+
+    function sendToServer(blob) {
+        const formData = new FormData();
+        formData.append('audio', blob);
+        console.log(formData);
+        var startTime = new Date();
+        var language = $("input[name=language]").val();
+        $.ajax({
+            url: "/backend-api/v2/generate_asr?lang="+language,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                var endTime = new Date();
+                var timeDiff = endTime - startTime; // in ms
+                timeDiff /= 1000;
+                var seconds = Math.round(timeDiff);
+                console.log(response);
+
+                $(".asr_message p").html(response);
+
+                info = "transcription cost: " + seconds + "s";
+                $(".asr_info p").html(info);
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+    }
+</script>
+<script src="{{ url_for('bp.static', filename='js/icons.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/markdown-it@latest/dist/markdown-it.min.js"></script>
+</body>
+</html>
