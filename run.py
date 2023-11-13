@@ -15,14 +15,14 @@ if __name__ == '__main__':
     url_prefix = config.pop('url_prefix')
 
     # Create the app
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='uploads')
     app.secret_key = secrets.token_hex(16)
 
     # Set up Babel
     create_babel(app)
 
     # Set up the website routes
-    site = Website(bp, url_prefix)
+    site = Website(bp, app, url_prefix)
     for route in site.routes:
         bp.add_url_rule(
             route,
@@ -31,7 +31,7 @@ if __name__ == '__main__':
         )
 
     # Set up the backend API routes
-    backend_api = Backend_Api(bp, config)
+    backend_api = Backend_Api(bp, app, config)
     for route in backend_api.routes:
         bp.add_url_rule(
             route,

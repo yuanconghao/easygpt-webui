@@ -2,7 +2,7 @@ import re
 import os
 import io
 from datetime import datetime
-from flask import request, Response, stream_with_context, send_file
+from flask import request, Response, stream_with_context, send_file, url_for
 from requests import get
 from server.config import special_instructions
 import openai
@@ -12,18 +12,21 @@ from typing import Generator, Union
 import time
 import tempfile
 from pydub import AudioSegment
+from werkzeug.utils import secure_filename
+from .utils.imgbb import upload_bb
 
 openai.api_key = os.environ.get("OPENAI_API_KEY_EASY")
 print(openai.api_key)
 
 
 class Backend_Api:
-    def __init__(self, bp, config: dict) -> None:
+    def __init__(self, bp, app, config: dict) -> None:
         """
         Initialize the Backend_Api class.
         :param app: Flask application instance
         :param config: Configuration dictionary
         """
+        self.app = app
         self.bp = bp
         self.routes = {
             '/backend-api/v2/conversation': {
@@ -38,7 +41,47 @@ class Backend_Api:
                 'function': self._generate_asr,
                 'methods': ['POST', 'GET']
             },
+            '/backend-api/v2/uploads': {
+                'function': self._uploads,
+                'methods': ['POST']
+            },
         }
+
+    def _uploads(self):
+        print("uploads===============")
+        images_path = os.path.join(self.app.static_folder)
+        print(images_path)
+        if not os.path.exists(images_path):
+            os.makedirs(images_path)
+        print(request.files)
+
+        if 'files' not in request.files:
+            return {'code': 100001, 'msg': 'No file part'}, 400
+
+        files = request.files.getlist('files')
+        print(files)
+        if not files or files[0].filename == '':
+            return {'code': 100002, 'msg': 'No selected file'}, 400
+
+        file_urls = []
+        bb_urls = []
+        for i, file in enumerate(files):
+            print(i)
+            ext = os.path.splitext(file.filename)[1]
+            new_filename = datetime.now().strftime("%Y%m%d%H%M%S%f") + ('-%d' % i) + ext
+            new_filename = secure_filename(new_filename)
+            file.save(os.path.join(images_path, new_filename))
+            file_url = url_for('static', filename=new_filename)
+            file_urls.append(file_url)
+
+            # upload bb
+            upload_bb_url = "https://kcs.51talk.com/easygpt" + file_url
+            # upload_bb_url = "http://127.0.0.1:8060/easygpt" + file_url
+            print(upload_bb_url)
+            bb_url = upload_bb(os.path.join(images_path, new_filename))
+            bb_urls.append(bb_url)
+
+        return {'code': 100000, 'msg': 'upload success', 'data': {'bb_path': str(bb_urls), 'path': str(file_urls)}}, 200
 
     def _generate_asr(self):
         print(request.args)
@@ -106,22 +149,26 @@ class Backend_Api:
         conversation_id = request.json['conversation_id']
 
         try:
-            model = request.json['model']
             print(request.json)
+            model = request.json['model']
             conversation = request.json['meta']['content']['conversation']
             prompt = request.json['meta']['content']['parts'][0]
-            conversation.append(prompt)
-            messages = conversation
-            print("=================")
-            print("messages:", messages)
-            stream = request.json["meta"]["content"]["internet_access"]
+            send_images = request.json["send_images"]
+            send_images = send_images.replace("'", "\"")
+            images = json.loads(send_images)
 
+            messages = build_messages(model, conversation, prompt, images)
+            print("conversation==================")
+            print(messages)
+
+            stream = request.json["meta"]["content"]["internet_access"]
             # Generate response
 
             if model == "dall-e-3":
+                print("delle3==================")
                 response = openai.images.generate(
                     model="dall-e-3",
-                    prompt=prompt['content'],
+                    prompt=messages,
                     size="1024x1024",
                     quality="standard",
                     n=1,
@@ -129,11 +176,19 @@ class Backend_Api:
                 revised_prompt = response.data[0].revised_prompt
                 image_url = response.data[0].url
                 link_image_url = f"![图片)]({image_url})"
-
                 return Response(revised_prompt + "\n\n" + link_image_url)
 
             elif model == "gpt-4-vision-preview":
-                pass
+                print("gpt4v==================")
+                response = openai.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    max_tokens=1024,
+                    stream=stream,
+                )
+                answer = response.choices[0].message.content
+                return Response(answer)
+
             else:
                 response = openai.chat.completions.create(
                     model=model,
@@ -219,7 +274,7 @@ def compact_response(response: Union[dict, Generator]) -> Response:
         def generate() -> Generator:
             try:
                 for chunk in response:
-                    # print(chunk)
+                    print(chunk)
                     # 假设chunk是流式API返回的数据结构
                     # 你可能需要根据实际的数据结构进行调整
                     if chunk.choices[0].finish_reason != 'stop':
@@ -259,41 +314,46 @@ def convert_audio_to_wav(file_path):
     return new_file_path
 
 
-def build_messages(jailbreak):
-    """  
-    Build the messages for the conversation.  
+def build_messages(model, conversation, prompt, images=[]):
+    if model == "dall-e-3":
+        return prompt['content']
+    elif model == "gpt-4-vision-preview":
+        new_content = []
 
-    :param jailbreak: Jailbreak instruction string  
-    :return: List of messages for the conversation  
-    """
-    print(request.json)
-    _conversation = request.json['meta']['content']['conversation']
-    internet_access = request.json['meta']['content']['internet_access']
-    prompt = request.json['meta']['content']['parts'][0]
+        new_text = {
+            "type": "text",
+            "text": prompt["content"]
+        }
+        new_content.append(new_text)
 
-    # Add the existing conversation
-    conversation = _conversation
+        if not images:
+            new_messages = {
+                "role": "user",
+                "content": new_content
+            }
+            # return conversation.append(new_messages)
+            # 不要历史记录
+            return [new_messages]
 
-    # Add web results if enabled
-    if internet_access:
-        current_date = datetime.now().strftime("%Y-%m-%d")
-        query = f'Current date: {current_date}. ' + prompt["content"]
-        search_results = fetch_search_results(query)
-        conversation.extend(search_results)
+        for image in images:
+            new_img_url = {
+                "type": "image_url",
+                "image_url": {
+                    "url": image
+                }
+            }
+            new_content.append(new_img_url)
 
-    print("=======================")
-    # Add jailbreak instructions if enabled
-    if jailbreak_instructions := getJailbreak(jailbreak):
-        conversation.extend(jailbreak_instructions)
+        new_messages = {
+            "role": "user",
+            "content": new_content
+        }
+        return [new_messages]
 
-    # Add the prompt
-    conversation.append(prompt)
-
-    # Reduce conversation size to avoid API Token quantity error
-    if len(conversation) > 3:
-        conversation = conversation[-4:]
-
-    return conversation
+    else:
+        conversation.append(prompt)
+        messages = conversation
+        return messages
 
 
 def fetch_search_results(query):

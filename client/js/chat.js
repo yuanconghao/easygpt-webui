@@ -60,6 +60,7 @@ const ask_gpt = async (message) => {
 		window.scrollTo(0, 0);
 		window.controller = new AbortController();
 
+		send_images = document.getElementById("send_images")
 		jailbreak = document.getElementById("jailbreak");
 		model = document.getElementById("model");
 		prompt_lock = true;
@@ -102,6 +103,7 @@ const ask_gpt = async (message) => {
 				api_key: get_api_key_from_input(),
 				conversation_id: window.conversation_id,
 				action: `_ask`,
+				send_images: send_images.textContent,
 				model: model.options[model.selectedIndex].value,
 				jailbreak: jailbreak.options[jailbreak.selectedIndex].value,
 				meta: {

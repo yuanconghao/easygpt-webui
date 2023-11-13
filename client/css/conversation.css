@@ -67,9 +67,18 @@
 	cursor: pointer;
 }
 
+#send-img-button {
+	position: absolute;
+	/*top:5px;*/
+	top: 5%;
+	left: 10px;
+	z-index: 1;
+	padding: 16px;
+}
+
 #send-button {
 	position: absolute;
-	bottom: 25%;
+	bottom: 5%;
 	right: 10px;
 	z-index: 1;
 	padding: 16px;

@@ -27,6 +27,7 @@
             sizes="16x16"
             href="{{ url_for('bp.static', filename='img/favicon-16x16.png') }}"/>
     <link rel="manifest" href="{{ url_for('bp.static', filename='img/site.webmanifest') }}"/>
+    <script src="{{ url_for('bp.static', filename='js/jquery.min.js') }}"></script>
     <link
             rel="stylesheet"
             href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/styles/base16/dracula.min.css"/>
@@ -36,7 +37,7 @@
             color: red;
         }
     </style>
-    <title>FreeGPT</title>
+    <title>EasyGPT</title>
 </head>
 
 <body data-urlprefix="{{ url_prefix }}">
@@ -100,12 +101,18 @@
         <div class="box" id="messages"></div>
         <div class="user-input">
             <div class="box input-box">
-						<textarea
-                                id="message-input"
-                                placeholder="{{ _('Ask a question') }}"
-                                cols="30"
-                                rows="10"
-                                style="white-space: pre-wrap"></textarea>
+                <div id="send-img-button">
+                    <i id="send-img-button-icon" class="fa-regular fa-images"></i>
+                    <input id="upload_images" accept="image/*" type="file" name="up_images[]" multiple title=""
+                           style="position: absolute;top: 0;right: 0;margin: 0;border: solid transparent;width: 100%;opacity: 0;cursor: pointer;">
+                    <p id="send_images" class="hidden"></p>
+                </div>
+                <textarea
+                        id="message-input"
+                        placeholder="{{ _('Ask a question') }}"
+                        cols="30"
+                        rows="10"
+                        style="white-space: pre-wrap"></textarea>
                 <div id="send-button">
                     <i class="fa-regular fa-paper-plane-top"></i>
                 </div>
@@ -173,6 +180,7 @@
     window.conversation_id = "{{ chat_id }}";
 </script>
 <script src="{{ url_for('bp.static', filename='js/api-key.js') }}"></script>
+<script src="{{ url_for('bp.static', filename='js/upload.js') }}"></script>
 <script src="{{ url_for('bp.static', filename='js/icons.js') }}"></script>
 <script src="{{ url_for('bp.static', filename='js/chat.js') }}" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/markdown-it@latest/dist/markdown-it.min.js"></script>

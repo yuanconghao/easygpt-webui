@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, request, session
+from flask import render_template, redirect, url_for, request, session, send_from_directory
 from flask_babel import refresh
 from time import time
 from os import urandom
@@ -6,8 +6,9 @@ from server.babel import get_locale, get_languages
 
 
 class Website:
-    def __init__(self, bp, url_prefix) -> None:
+    def __init__(self, bp, app, url_prefix) -> None:
         self.bp = bp
+        self.app = app
         self.url_prefix = url_prefix
         self.routes = {
             '/': {
@@ -46,7 +47,14 @@ class Website:
                 'function': self.get_languages,
                 'methods': ['GET']
             },
+            '/uploads/<filename>': {
+                'function': self._uploaded_file,
+                'methods': ['GET']
+            },
         }
+
+    def _uploaded_file(self, filename):
+        return send_from_directory(self.app.static_folder, filename)
 
     def _chat(self, conversation_id):
         if '-' not in conversation_id:

@@ -1,0 +1,80 @@
+.loading.loading.loading.loading.loading.loading.button {
+    position: relative;
+    cursor: default;
+    text-shadow: none!important;
+    color: transparent!important;
+    opacity: 1;
+    pointer-events: auto;
+    -webkit-transition: all 0s linear,opacity .1s ease;
+    transition: all 0s linear,opacity .1s ease
+}
+
+.loading.button:before {
+    position: absolute;
+    content: '';
+    top: 50%;
+    left: 50%;
+    margin: -.64285714em 0 0 -.64285714em;
+    width: 1.28571429em;
+    height: 1.28571429em;
+    border-radius: 500rem;
+    border: .2em solid rgba(0,0,0,.15)
+}
+
+.loading.button:after {
+    position: absolute;
+    content: '';
+    top: 50%;
+    left: 50%;
+    margin: -.64285714em 0 0 -.64285714em;
+    width: 1.28571429em;
+    height: 1.28571429em;
+    -webkit-animation: button-spin .6s linear;
+    animation: button-spin .6s linear;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    border-radius: 500rem;
+    border-color: #fff transparent transparent;
+    border-style: solid;
+    border-width: .2em;
+    -webkit-box-shadow: 0 0 0 1px transparent;
+    box-shadow: 0 0 0 1px transparent
+}
+
+.labeled.icon.loading.button .icon {
+    background-color: transparent;
+    -webkit-box-shadow: none;
+    box-shadow: none
+}
+
+@-webkit-keyframes button-spin {
+    from {
+        -webkit-transform: rotate(0);
+        transform: rotate(0)
+    }
+
+    to {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg)
+    }
+}
+
+@keyframes button-spin {
+    from {
+        -webkit-transform: rotate(0);
+        transform: rotate(0)
+    }
+
+    to {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg)
+    }
+}
+
+.basic.loading.button:not(.inverted):before {
+    border-color: rgba(0,0,0,.1)
+}
+
+.basic.loading.button:not(.inverted):after {
+    border-top-color: #767676
+}
