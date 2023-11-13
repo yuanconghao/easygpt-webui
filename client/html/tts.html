@@ -96,7 +96,7 @@
                 <p></p>
             </div>
             <div id="tts_div_id">
-                <audio id="tts_audio_id" autoplay="autoplay">
+                <audio id="tts_audio_id" autoplay="autoplay" controls>
                     <source id="tts_source_id" src="" type="audio/mpeg">
                     <embed id="tts_embed_id" height="0" width="0" src="">
                 </audio>
@@ -133,13 +133,14 @@
                     timeDiff /= 1000;
                     var seconds = Math.round(timeDiff);
                     console.log("jjjjjjjjjjjjjjjjjjjjj");
+                    console.log(data)
                     var new_url = URL.createObjectURL(data);
                     console.log(new_url);
                     $('#tts_source_id').attr('src', new_url);
                     $('#tts_audio_id').get(0).load();
                     $('#tts_audio_id').get(0).play();
 
-                    info = "role: " + voice + " character length: " + txt.length + " cost: " + seconds + "s";
+                    info = "role: " + voice + ", character length: " + txt.length + ", cost: " + seconds + "s";
                     $(".tts_info p").html(info);
                     $(".get_tts").removeClass('loading');
                 },
