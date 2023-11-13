@@ -114,7 +114,7 @@
 <!-- scripts -->
 <script>
 
-    $(function(){
+    $(function () {
         $('.ui.language').dropdown();
     });
     var recorder = new Recorder({
@@ -187,7 +187,7 @@
         var startTime = new Date();
         var language = $("input[name=language]").val();
         $.ajax({
-            url: ${url_prefix} + "/backend-api/v2/generate_asr?lang="+language,
+            url: `${url_prefix}/backend-api/v2/generate_asr?lang=` + language,
             type: 'POST',
             data: formData,
             processData: false,
