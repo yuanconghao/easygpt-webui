@@ -54,10 +54,18 @@
                 <i class="fa-regular fa-trash"></i>
                 <span>{{ _('Clear Conversations') }}</span>
             </button>
-            <br>
+            <div class="divider"></div>
             <button class="button" onclick="window.open('/easygpt/prompt', '_blank');">
                 <i class="fa-regular fa-bell"></i>
                 <span>{{ _('Lesson Prompt') }}</span>
+            </button>
+            <button class="button" onclick="window.open('/easygpt/asr', '_blank');">
+                <i class="fa-regular fa-microphone"></i>
+                <span>{{ _('ASR[语音转文字]') }}</span>
+            </button>
+            <button class="button" onclick="window.open('/easygpt/tts', '_blank');">
+                <i class="fa-regular fa-volume"></i>
+                <span>{{ _('TTS[文字转语音]') }}</span>
             </button>
             <div class="api-key-container hidden" id="api-key-container">
                 <button id="show-api-key-button" class="button">
