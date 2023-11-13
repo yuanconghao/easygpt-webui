@@ -1,4 +1,7 @@
 $(function () {
+
+    const url_prefix = document.querySelector("body").getAttribute("data-urlprefix");
+
     $('#send-img-button').change(function () {
         var files = $('#upload_images')[0].files;
         if(files.length > 3) {
