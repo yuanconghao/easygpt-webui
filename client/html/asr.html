@@ -181,6 +181,8 @@
     }
 
     function sendToServer(blob) {
+
+        const url_prefix = document.querySelector("body").getAttribute("data-urlprefix");
         const formData = new FormData();
         formData.append('audio', blob);
         console.log(formData);
