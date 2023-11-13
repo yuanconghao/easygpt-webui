@@ -154,8 +154,10 @@ class Backend_Api:
             conversation = request.json['meta']['content']['conversation']
             prompt = request.json['meta']['content']['parts'][0]
             send_images = request.json["send_images"]
-            send_images = send_images.replace("'", "\"")
-            images = json.loads(send_images)
+            images = []
+            if send_images:
+                send_images = send_images.replace("'", "\"")
+                images = json.loads(send_images)
 
             messages = build_messages(model, conversation, prompt, images)
             print("conversation==================")
