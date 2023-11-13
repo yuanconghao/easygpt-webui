@@ -13,6 +13,9 @@ import time
 import tempfile
 from pydub import AudioSegment
 
+openai.api_key = os.environ.get("OPENAI_API_KEY_EASY")
+print(openai.api_key)
+
 
 class Backend_Api:
     def __init__(self, bp, config: dict) -> None:
@@ -114,8 +117,6 @@ class Backend_Api:
             stream = request.json["meta"]["content"]["internet_access"]
 
             # Generate response
-            openai.api_key = os.environ.get("OPENAI_API_KEY_EASY")
-            print(openai.api_key)
 
             if model == "dall-e-3":
                 response = openai.images.generate(
