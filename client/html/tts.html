@@ -146,6 +146,9 @@
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.error("AJAX request failed: ", textStatus, errorThrown);
+                    $(".get_tts").removeClass('loading');
+                    info = "request failed";
+                    $(".tts_info p").html(info);
                 }
             });
 

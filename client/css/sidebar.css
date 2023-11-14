@@ -1,6 +1,6 @@
 .sidebar {
 	max-width: 260px;
-	padding: var(--section-gap);
+	padding: 10px;
 	flex-shrink: 0;
 	display: flex;
 	flex-direction: column;
@@ -13,7 +13,7 @@
 }
 
 .sidebar .conversation-sidebar {
-	padding: 8px 12px;
+	padding: 4px 12px;
 	display: flex;
 	gap: 18px;
 	align-items: center;

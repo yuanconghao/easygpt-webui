@@ -1,5 +1,5 @@
 import secrets
-
+import os
 from server.bp import bp
 from server.website import Website
 from server.backend import Backend_Api
@@ -41,6 +41,9 @@ if __name__ == '__main__':
 
     # Register the blueprint
     app.register_blueprint(bp, url_prefix=url_prefix)
+
+    # load model if exist
+    # if os.path.exists("./llms/llama2"):
 
     # Run the Flask server
     print(f"Running on {site_config['port']}{url_prefix}")

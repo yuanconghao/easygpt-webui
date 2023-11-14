@@ -5,9 +5,11 @@ from datetime import datetime
 from flask import request, url_for
 from werkzeug.utils import secure_filename
 from server.utils.imgbb import upload_bb
-from server.models.asr import generate_asr
-from server.models.tts import generate_tts
-from server.models.gpt import request_gpt, request_dalle, request_vision, build_messages
+from server.models.prompter import Prompter
+from server.models.asr import ASRGenerator
+from server.models.tts import TTSGenerator
+from server.models.gpt import GPTGenerator
+from server.models.llama2 import LLama2Generator
 
 openai.api_key = os.environ.get("OPENAI_API_KEY_EASY")
 print(openai.api_key)
@@ -50,7 +52,7 @@ class Backend_Api:
             print(request.args)
             lang = request.args.get('lang')
             audio_file = request.files['audio']
-            return generate_asr(audio_file, lang)
+            return ASRGenerator.generate_asr(audio_file, lang)
         except Exception as e:
             print(e)
             print(e.__traceback__.tb_next)
@@ -70,7 +72,7 @@ class Backend_Api:
             print(request.json)
             text = request.json['text']
             voice = request.json['voice']
-            return generate_tts(text, voice)
+            return TTSGenerator.generate_tts(text, voice)
         except Exception as e:
             print(e)
             print(e.__traceback__.tb_next)
@@ -96,7 +98,7 @@ class Backend_Api:
                 send_images = send_images.replace("'", "\"")
                 images = json.loads(send_images)
 
-            messages = build_messages(model, conversation, prompt, images)
+            messages = Prompter.build_messages(model, conversation, prompt, images)
             print("messages==================")
             print(messages)
 
@@ -105,13 +107,16 @@ class Backend_Api:
 
             if model == "dall-e-3":
                 print("delle3==================")
-                return request_dalle(messages)
+                return GPTGenerator.request_dalle(messages)
             elif model == "gpt-4-vision-preview":
                 print("gpt4v==================")
-                return request_vision(messages)
+                return GPTGenerator.request_vision(messages)
+            elif model == "llama2":
+                print("llama2================")
+                return LLama2Generator.generate_llama2(messages)
             else:
                 print("gpt===============")
-                return request_gpt(model, messages, stream)
+                return GPTGenerator.request_gpt(model, messages, stream)
 
         except Exception as e:
             print(e)
@@ -161,7 +166,8 @@ class Backend_Api:
                 bb_url = upload_bb(os.path.join(images_path, new_filename))
                 bb_urls.append(bb_url)
 
-            return {'code': 100000, 'msg': 'upload success', 'data': {'bb_path': str(bb_urls), 'path': str(file_urls)}}, 200
+            return {'code': 100000, 'msg': 'upload success',
+                    'data': {'bb_path': str(bb_urls), 'path': str(file_urls)}}, 200
         except Exception as e:
             print(e)
             print(e.__traceback__.tb_next)
