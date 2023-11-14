@@ -4,5 +4,9 @@
 		"port": 8060,
 		"debug": true
 	},
-	"url_prefix": "/easygpt"
+	"url_prefix": "/easygpt",
+	"llama2": {
+		"use": true,
+		"lora": true
+	}
 }

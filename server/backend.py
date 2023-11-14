@@ -43,6 +43,11 @@ class Backend_Api:
             },
         }
 
+        llama2 = config['llama2']
+        # load model if exist
+        if llama2["use"]:
+            self.model, self.tokenizer = LLama2Generator.load_model(llama2["lora"])
+
     def _generate_asr(self):
         """
         generate asr
@@ -113,7 +118,7 @@ class Backend_Api:
                 return GPTGenerator.request_vision(messages)
             elif model == "llama2":
                 print("llama2================")
-                return LLama2Generator.generate_llama2(messages)
+                return LLama2Generator.generate_llama2(self.model, self.tokenizer, messages)
             else:
                 print("gpt===============")
                 return GPTGenerator.request_gpt(model, messages, stream)

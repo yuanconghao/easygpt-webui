@@ -33,11 +33,29 @@ class LLama2Generator:
         LLama2Generator.load_model()
 
     @staticmethod
-    def load_model():
-        pass
+    def load_model(lora=False):
+        model, tokenizer = LLama2Generator.huggingface_loader(), LLama2Generator.load_tokenizer()
+        if lora:
+            # 加载lora权重
+            model = PeftModel.from_pretrained(
+                model,
+                LLama2Generator.lora_weights,
+                torch_dtype=torch.float16,
+            )
+        return model, tokenizer
 
     @staticmethod
-    def generate_llama2(query):
+    def huggingface_loader():
+        # 加载模型
+        model = ModelUtils.load_model(
+            LLama2Generator.base_model,
+            load_in_4bit=False,
+            adapter_name_or_path=LLama2Generator.adapter_name_or_path
+        )
+        return model
+
+    @staticmethod
+    def load_tokenizer():
         # 加载tokenizer
         tokenizer = AutoTokenizer.from_pretrained(
             LLama2Generator.base_model,
@@ -45,44 +63,35 @@ class LLama2Generator:
             # llama不支持fast
             use_fast=False,
         )
-        # 加载模型
-        model = ModelUtils.load_model(
-            LLama2Generator.base_model,
-            load_in_4bit=False,
-            adapter_name_or_path=LLama2Generator.adapter_name_or_path
-        )
-        # 加载lora权重
-        model = PeftModel.from_pretrained(
-            model,
-            LLama2Generator.lora_weights,
-            torch_dtype=torch.float16,
-        )
+        return tokenizer
+
+    @staticmethod
+    def generate_llama2(model, tokenizer, query):
         # 记录所有历史记录
         history_token_ids = torch.tensor([[tokenizer.bos_token_id]], dtype=torch.long)
 
         # 开始对话
         utterance_id = 0  # 记录当前是第几轮对话，为了契合chatglm的数据组织格式
         user_input = query
-        while True:
-            utterance_id += 1
-            input_ids = tokenizer(user_input, return_tensors="pt", add_special_tokens=False).input_ids
-            eos_token_id = torch.tensor([[tokenizer.eos_token_id]], dtype=torch.long)
-            user_input_ids = torch.concat([input_ids, eos_token_id], dim=1)
-            history_token_ids = torch.concat((history_token_ids, user_input_ids), dim=1)
-            model_input_ids = history_token_ids[:, -LLama2Generator.history_max_len:].to(device)
-            with torch.no_grad():
-                outputs = model.generate(
-                    input_ids=model_input_ids,
-                    max_new_tokens=LLama2Generator.max_new_tokens,
-                    do_sample=True,
-                    top_p=LLama2Generator.top_p,
-                    temperature=LLama2Generator.temperature,
-                    repetition_penalty=LLama2Generator.repetition_penalty,
-                    eos_token_id=tokenizer.eos_token_id
-                )
-            model_input_ids_len = model_input_ids.size(1)
-            response_ids = outputs[:, model_input_ids_len:]
-            history_token_ids = torch.concat((history_token_ids, response_ids.cpu()), dim=1)
-            response = tokenizer.batch_decode(response_ids)
-            print("Firefly：" + response[0].strip().replace(tokenizer.eos_token, ""))
-            user_input = input('User：')
+        utterance_id += 1
+        input_ids = tokenizer(user_input, return_tensors="pt", add_special_tokens=False).input_ids
+        eos_token_id = torch.tensor([[tokenizer.eos_token_id]], dtype=torch.long)
+        user_input_ids = torch.concat([input_ids, eos_token_id], dim=1)
+        history_token_ids = torch.concat((history_token_ids, user_input_ids), dim=1)
+        model_input_ids = history_token_ids[:, -LLama2Generator.history_max_len:].to(device)
+        with torch.no_grad():
+            outputs = model.generate(
+                input_ids=model_input_ids,
+                max_new_tokens=LLama2Generator.max_new_tokens,
+                do_sample=True,
+                top_p=LLama2Generator.top_p,
+                temperature=LLama2Generator.temperature,
+                repetition_penalty=LLama2Generator.repetition_penalty,
+                eos_token_id=tokenizer.eos_token_id
+            )
+        model_input_ids_len = model_input_ids.size(1)
+        response_ids = outputs[:, model_input_ids_len:]
+        history_token_ids = torch.concat((history_token_ids, response_ids.cpu()), dim=1)
+        print(history_token_ids)
+        response = tokenizer.batch_decode(response_ids)
+        return response
