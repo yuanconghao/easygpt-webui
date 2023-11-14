@@ -9,8 +9,8 @@ if torch.cuda.is_available():
 
 class LLama2Generator:
     # 使用合并后的模型进行推理
-    base_model = '~/llama2/llama2-chat-hf'
-    lora_weights = '~/llama2/llama2-qlora-ai-teacher'
+    base_model = '/root/llama2/llama2-chat-hf'
+    lora_weights = '/root/llama2/llama2-qlora-ai-teacher'
     adapter_name_or_path = None
 
     # 使用base model和adapter进行推理
