@@ -1,0 +1,126 @@
+from flask import request, Response, stream_with_context, send_file, url_for
+from typing import Generator, Union
+import json
+import logging
+import openai
+
+
+def request_gpt(model, messages, stream):
+    """
+    request gpt
+    """
+    response = openai.chat.completions.create(
+        model=model,
+        messages=messages,
+        temperature=0.5,
+        max_tokens=2048,
+        stream=stream,
+    )
+    print("response==================")
+    print(response)
+    if stream:
+        return compact_response(response)
+
+    answer = response.choices[0].message.content
+    return Response(answer)
+
+
+def request_dalle(messages):
+    """
+    request dalle
+    """
+    response = openai.images.generate(
+        model="dall-e-3",
+        prompt=messages,
+        size="1024x1024",
+        quality="standard",
+        n=1,
+    )
+    revised_prompt = response.data[0].revised_prompt
+    image_url = response.data[0].url
+    link_image_url = f"![图片)]({image_url})"
+    return Response(revised_prompt + "\n\n" + link_image_url)
+
+
+def request_vision(messages):
+    """
+    request vision
+    """
+    response = openai.chat.completions.create(
+        model="gpt-4-vision-preview",
+        messages=messages,
+        max_tokens=1024,
+        stream=False,
+    )
+    answer = response.choices[0].message.content
+    return Response(answer)
+
+
+def compact_response(response: Union[dict, Generator]) -> Response:
+    """
+    return stream response
+    """
+    if isinstance(response, dict):
+        # 如果响应是一个字典，直接返回JSON响应
+        return Response(response=json.dumps(response), status=200, mimetype='application/json')
+    else:
+        # 如果响应是一个生成器，创建并返回一个流式响应
+        def generate() -> Generator:
+            try:
+                for chunk in response:
+                    print(chunk)
+                    # 假设chunk是流式API返回的数据结构
+                    # 你可能需要根据实际的数据结构进行调整
+                    if chunk.choices[0].finish_reason != 'stop':
+                        yield chunk.choices[0].delta.content
+            except Exception:
+                # 在生产环境中，应使用日志记录此类错误
+                logging.exception("internal server error.")
+
+        # 使用stream_with_context确保请求上下文在流生成期间保持激活
+        return Response(stream_with_context(generate()), status=200, mimetype='text/event-stream')
+
+
+def build_messages(model, conversation, prompt, images=[]):
+    """
+    build gpt messages
+    """
+    if model == "dall-e-3":
+        return prompt['content']
+    elif model == "gpt-4-vision-preview":
+        new_content = []
+
+        new_text = {
+            "type": "text",
+            "text": prompt["content"]
+        }
+        new_content.append(new_text)
+
+        if not images:
+            new_messages = {
+                "role": "user",
+                "content": new_content
+            }
+            # return conversation.append(new_messages)
+            # 不要历史记录
+            return [new_messages]
+
+        for image in images:
+            new_img_url = {
+                "type": "image_url",
+                "image_url": {
+                    "url": image
+                }
+            }
+            new_content.append(new_img_url)
+
+        new_messages = {
+            "role": "user",
+            "content": new_content
+        }
+        return [new_messages]
+
+    else:
+        conversation.append(prompt)
+        messages = conversation
+        return messages

@@ -40,12 +40,13 @@ $(function () {
                 $("#send_images").html(data.data.bb_path);
                 $("#send-img-button-icon").removeClass('loading button')
                 $("#send-img-button-icon").addClass("fa-images");
+                $("#send-img-button-icon").css("color", "green");
             },
             error: function () {
                 console.log('upload error');
                 alert('upload error');
                 $("#send-img-button-icon").removeClass('loading button')
-                $("#send-img-button-icon").addClass("fa-images");
+                $("#send-img-button-icon").css("color", "red");
             }
         });
     });
