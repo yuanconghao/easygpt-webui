@@ -1,5 +1,7 @@
 import torch
 from transformers import AutoTokenizer
+import sys
+sys.path.append("../../")
 from server.utils.model import ModelUtils
 
 
