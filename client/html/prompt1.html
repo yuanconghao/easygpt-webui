@@ -134,6 +134,9 @@
             <div class="ui ignored info message prompt">
                 <p></p>
             </div>
+            <div class="ui ignored warning message prompt_raw">
+                <p></p>
+            </div>
 
         </div>
     </div>
@@ -205,16 +208,24 @@
             }
             level_unit_lesson = level + "-" + unit + "-" + lesson
             prompt_text = "Learning " + level_unit_lesson + ", learning about the topic of \"" + topic + "\", with the title \"" + title + "\"";
+            prompt_raw_text = "You will play my English teacher Max, I am a 5-8-year-old Chinese student who has just started learning English. Your teaching style is warm and encouraging, embodying a positive and engaging approach. You will initiate communication by asking questions. Your responses should be as concise as possible, not exceeding 20 words at a time and avoiding complex clauses. Your role is not limited to asking questions; you should also guide the conversation, identify my responses, ask follow-up questions, emphasize my areas for improvement, and encourage deeper thinking. Please instruct me on the topic of ";
+            prompt_raw_text += topic;
             var words = $("input[name=words]").val();
             if (words !== "") {
-                prompt_text += ", with the keywords being \"" + words + "\","
+                prompt_text += ", with the keywords being \"" + words + "\""
+                prompt_raw_text += ", with the keywords being \"" + words + "\"";
             }
             var sentence = $("input[name=sentence]").val();
             if (sentence !== "") {
-                prompt_text += " and the key sentences are \"" + sentence + "\"."
+                prompt_text += ", and the key sentences are \"" + sentence + "\"."
+                prompt_raw_text += ", and the key sentences are \"" + sentence + "\"."
+            }else{
+                prompt_text += ".";
+                prompt_raw_text += ".";
             }
-            $(".prompt p").html(prompt_text);
 
+            $(".prompt p").html(prompt_text);
+            $(".prompt_raw p").html(prompt_raw_text);
         });
     });
 </script>
