@@ -6,7 +6,7 @@
 	},
 	"url_prefix": "/easygpt",
 	"llama2": {
-		"use": true,
+		"use": false,
 		"lora": true
 	}
 }

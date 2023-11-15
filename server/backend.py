@@ -44,9 +44,12 @@ class Backend_Api:
         }
 
         llama2 = config['llama2']
+        self.model = None
+        self.tokenizer = None
         # load model if exist
         if llama2["use"]:
-            self.model, self.tokenizer = LLama2Generator.load_model(llama2["lora"])
+            if self.model is None or self.tokenizer is None:
+                self.model, self.tokenizer = LLama2Generator.load_model(llama2["lora"])
 
     def _generate_asr(self):
         """
