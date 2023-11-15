@@ -53,32 +53,36 @@ def generate():
 
     # 获取请求数据
     data = request.get_json(force=True)
+    query = data[0]["content"]
 
-    # 对每个query进行推理
-    predictions = []
-    conversation_history = ''
-    for query in data:
-        # 将之前的对话历史和新的用户输入组合在一起
-        conversation_history += f"{query['role']}: {query['content']}\n"
+    # 记录所有历史记录
+    history_token_ids = torch.tensor([[tokenizer.bos_token_id]], dtype=torch.long)
 
-        # 对输入进行编码
-        inputs = tokenizer.encode(conversation_history, return_tensors='pt', add_special_tokens=False)
-
-        # 生成输出
-        outputs = model.generate(inputs, max_new_tokens=max_new_tokens, do_sample=True, top_p=top_p,
-                                 temperature=temperature, repetition_penalty=repetition_penalty, num_return_sequences=1)
-
-        # 解码输出
-        new_output = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        new_output = new_output[len(conversation_history):].strip()
-
-        # 添加新的输出到对话历史
-        conversation_history += f"assistant: {new_output}\n"
-
-        predictions.append({'content': new_output, 'role': 'bot'})
-
-    # 返回推理结果
-    return jsonify(predictions)
+    # 开始对话
+    utterance_id = 0  # 记录当前是第几轮对话，为了契合chatglm的数据组织格式
+    user_input = query
+    utterance_id += 1
+    input_ids = tokenizer(user_input, return_tensors="pt", add_special_tokens=False).input_ids
+    eos_token_id = torch.tensor([[tokenizer.eos_token_id]], dtype=torch.long)
+    user_input_ids = torch.concat([input_ids, eos_token_id], dim=1)
+    history_token_ids = torch.concat((history_token_ids, user_input_ids), dim=1)
+    model_input_ids = history_token_ids[:, -history_max_len:].to(device)
+    with torch.no_grad():
+        outputs = model.generate(
+            input_ids=model_input_ids,
+            max_new_tokens=max_new_tokens,
+            do_sample=True,
+            top_p=top_p,
+            temperature=temperature,
+            repetition_penalty=repetition_penalty,
+            eos_token_id=tokenizer.eos_token_id
+        )
+    model_input_ids_len = model_input_ids.size(1)
+    response_ids = outputs[:, model_input_ids_len:]
+    history_token_ids = torch.concat((history_token_ids, response_ids.cpu()), dim=1)
+    print(history_token_ids)
+    response = tokenizer.batch_decode(response_ids)
+    return response
 
 
 if __name__ == '__main__':
