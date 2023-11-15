@@ -24,6 +24,7 @@ class Backend_Api:
         """
         self.app = app
         self.bp = bp
+        self.config = config
         self.routes = {
             '/backend-api/v2/conversation': {
                 'function': self._conversation,
@@ -121,6 +122,8 @@ class Backend_Api:
                 return GPTGenerator.request_vision(messages)
             elif model == "llama2":
                 print("llama2================")
+                if not self.config["llama2"]["use"]:
+                    return "LLama2 Not Supported, Needs to Setting Config config[llama2][use] true"
                 return LLama2Generator.generate_llama2(self.model, self.tokenizer, messages)
             else:
                 print("gpt===============")
