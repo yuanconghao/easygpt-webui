@@ -56,7 +56,14 @@ class GPTGenerator:
             stream=False,
         )
         answer = response.choices[0].message.content
-        return Response(answer)
+
+        link_image_url = ""
+        for content in messages[0]["content"]:
+            if content["type"] != "image_url":
+                continue
+            link_image_url += f"![图片)]({content['image_url']['url']}) "
+
+        return Response(answer  + "\n\n" + link_image_url)
 
     @staticmethod
     def compact_response(response: Union[dict, Generator]) -> Response:
