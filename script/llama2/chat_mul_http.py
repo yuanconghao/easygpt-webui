@@ -26,31 +26,23 @@ top_p = 0.9
 temperature = 0.35
 repetition_penalty = 1.0
 
-model = None
-tokenizer = None
-
-
-@app.before_request
-def load_model():
-    global model, tokenizer
-    # 加载模型
-    model = ModelUtils.load_model(
-        model_name_or_path,
-        load_in_4bit=load_in_4bit,
-        adapter_name_or_path=adapter_name_or_path
-    ).eval()
-    # 加载tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(
-        model_name_or_path,
-        trust_remote_code=True,
-        # llama不支持fast
-        use_fast=False
-    )
+# 加载模型
+model = ModelUtils.load_model(
+    model_name_or_path,
+    load_in_4bit=load_in_4bit,
+    adapter_name_or_path=adapter_name_or_path
+).eval()
+# 加载tokenizer
+tokenizer = AutoTokenizer.from_pretrained(
+    model_name_or_path,
+    trust_remote_code=True,
+    # llama不支持fast
+    use_fast=False
+)
 
 
 @app.route('/easygpt/llama2/generate', methods=['POST'])
 def generate():
-
     # 获取请求数据
     data = request.get_json(force=True)
     query = data[0]["content"]
