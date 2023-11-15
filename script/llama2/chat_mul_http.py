@@ -6,6 +6,8 @@ from flask import Flask, request, jsonify
 sys.path.append("../../")
 from server.utils.model import ModelUtils
 
+app = Flask(__name__)
+
 # 使用合并后的模型进行推理
 # model_name_or_path = '/root/llama2/llama2-chat-hf'
 # adapter_name_or_path = None
@@ -24,25 +26,31 @@ top_p = 0.9
 temperature = 0.35
 repetition_penalty = 1.0
 
-# 加载模型
-model = ModelUtils.load_model(
-    model_name_or_path,
-    load_in_4bit=load_in_4bit,
-    adapter_name_or_path=adapter_name_or_path
-).eval()
-# 加载tokenizer
-tokenizer = AutoTokenizer.from_pretrained(
-    model_name_or_path,
-    trust_remote_code=True,
-    # llama不支持fast
-    use_fast=False
-)
+model = None
+tokenizer = None
 
-app = Flask(__name__)
+
+@app.before_request
+def load_model():
+    global model, tokenizer
+    # 加载模型
+    model = ModelUtils.load_model(
+        model_name_or_path,
+        load_in_4bit=load_in_4bit,
+        adapter_name_or_path=adapter_name_or_path
+    ).eval()
+    # 加载tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(
+        model_name_or_path,
+        trust_remote_code=True,
+        # llama不支持fast
+        use_fast=False
+    )
 
 
 @app.route('/easygpt/llama2/generate', methods=['POST'])
 def generate():
+
     # 获取请求数据
     data = request.get_json(force=True)
 
