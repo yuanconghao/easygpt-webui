@@ -82,4 +82,4 @@ def generate():
 
 
 if __name__ == '__main__':
-    app.run(ip="0.0.0.0", port=9002, debug=True)
+    app.run(host="0.0.0.0", port=9002, debug=True)
