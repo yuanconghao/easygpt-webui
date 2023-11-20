@@ -8,6 +8,12 @@ import openai
 class GPTGenerator:
 
     @staticmethod
+    def request_assitant(model, messages):
+
+
+        return Response()
+
+    @staticmethod
     def request_gpt(model, messages, stream):
         """
         request gpt
