@@ -41,7 +41,9 @@ class Prompter:
                 "content": new_content
             }
             return [new_messages]
-        elif model == "llama2":
+        elif model == "llama2-7b":
+            return prompt['content']
+        elif model == "llama2-7b-chat":
             return prompt['content']
         else:
             conversation.append(prompt)
