@@ -68,8 +68,9 @@ class LLama2Generator:
     @staticmethod
     def generate_llama2_text(model, tokenizer, query):
         inputs = tokenizer(query, return_tensors="pt").to(device)
-        outputs = model.generate(**inputs, max_new_tokens=128)
-        return tokenizer.decode(outputs[0], skip_special_tokens=True)
+        outputs = model.generate(**inputs, max_new_tokens=512)
+        answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        return answer
 
     @staticmethod
     def generate_llama2_chat(model, tokenizer, query):
