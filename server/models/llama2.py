@@ -93,11 +93,34 @@ class LLama2Generator:
             return f"Error: {str(e)}"
 
     @staticmethod
-    def generate_llama2_chat1(model, tokenizer, messages):
-        pass
+    def generate_llama2_chat(model, tokenizer, query):
+        # tokenizer
+        token_ids = tokenizer.encode(query, add_special_tokens=True)
+        # Generate a response
+        with torch.no_grad():
+            response_ids = model.generate(
+                input_ids=torch.tensor([token_ids], dtype=torch.long).to(device),
+                max_length=LLama2Generator.max_new_tokens,
+                do_sample=True,
+                top_p=LLama2Generator.top_p,
+                temperature=LLama2Generator.temperature,
+                repetition_penalty=LLama2Generator.repetition_penalty,
+                eos_token_id=tokenizer.eos_token_id
+            )
+
+        print(response_ids)
+        # Decode the response
+        answer = tokenizer.decode(response_ids[0], skip_special_tokens=True)
+
+        result = {
+            "id": "",
+            "content": answer
+        }
+        return Response(json.dumps(result))
+
 
     @staticmethod
-    def generate_llama2_chat(model, tokenizer, query, history_token_ids=None):
+    def generate_llama2_chat_ids(model, tokenizer, query, history_token_ids=None):
         print("history_token_ids1:", history_token_ids)
         if history_token_ids is None:
             # Initialize conversation history if not provided

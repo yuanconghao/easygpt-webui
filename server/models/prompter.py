@@ -44,7 +44,15 @@ class Prompter:
         elif model == "llama2-7b":
             return prompt['content']
         elif model == "llama2-7b-chat":
-            return prompt['content']
+            # [{'role': 'user', 'content': 'helo'}, {'role': 'assistant', 'content': 'hello'} ]
+            # helo hello
+            if not conversation:
+                return prompt['content']
+            content = ""
+            for item in conversation:
+                content += item["content"] + " "
+            content += prompt["content"]
+            return content
         else:
             conversation.append(prompt)
             messages = conversation
