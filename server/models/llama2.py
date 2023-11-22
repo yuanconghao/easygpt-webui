@@ -1,8 +1,9 @@
+import json
+import torch
 from transformers import AutoTokenizer
 from peft import PeftModel
-import torch
-from server.utils.model import ModelUtils
 from flask import request, Response, stream_with_context, send_file, url_for
+from server.utils.model import ModelUtils
 
 if torch.cuda.is_available():
     device = "cuda"
@@ -84,7 +85,7 @@ class LLama2Generator:
                     "id": "",
                     "content": answer
                 }
-                return Response(result)
+                return Response(json.dumps(result))
             else:
                 return "No text generated."
         except Exception as e:

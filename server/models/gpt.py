@@ -1,8 +1,8 @@
-from flask import request, Response, stream_with_context, send_file, url_for
-from typing import Generator, Union
 import json
 import logging
 import openai
+from flask import request, Response, stream_with_context, send_file, url_for
+from typing import Generator, Union
 
 
 class GPTGenerator:
@@ -30,7 +30,7 @@ class GPTGenerator:
             "id": "",
             "content": answer
         }
-        return Response(result)
+        return Response(json.dumps(result))
 
     @staticmethod
     def request_dalle(messages):
@@ -52,7 +52,7 @@ class GPTGenerator:
             "id": "",
             "content": revised_prompt + "\n\n" + link_image_url
         }
-        return Response(result)
+        return Response(json.dumps(result))
 
     @staticmethod
     def request_vision(messages):
@@ -77,7 +77,7 @@ class GPTGenerator:
             "id": "",
             "content": answer + "\n\n" + link_image_url
         }
-        return Response(result)
+        return Response(json.dumps(result))
 
     @staticmethod
     def compact_response(response: Union[dict, Generator]) -> Response:
