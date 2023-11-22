@@ -102,10 +102,11 @@ class LLama2Generator:
         # Append user input to history
         user_input_ids = tokenizer.encode(query, add_special_tokens=True)
         history_token_ids.append(user_input_ids)
+        print("history_token_ids3:", history_token_ids)
 
         # Flatten the history_token_ids list
         flat_history = [item for sublist in history_token_ids for item in sublist]
-
+        print("flat_history:", flat_history)
         # Generate a response
         with torch.no_grad():
             response_ids = model.generate(
@@ -118,12 +119,13 @@ class LLama2Generator:
                 eos_token_id=tokenizer.eos_token_id
             )
 
+        print(response_ids)
         # Append response to history
         history_token_ids.append(response_ids[0].tolist())
-
+        print("history_token_ids4:", history_token_ids)
         # Decode the response
         answer = tokenizer.decode(response_ids[0], skip_special_tokens=True)
-        print("history_token_ids3:", history_token_ids)
+
         result = {
             "id": history_token_ids,
             "content": answer
