@@ -94,29 +94,27 @@ class LLama2Generator:
 
     @staticmethod
     def generate_llama2_chat(model, tokenizer, query):
-        # tokenizer
-        token_ids = tokenizer.encode(query, add_special_tokens=True)
-        # Generate a response
-        with torch.no_grad():
-            response_ids = model.generate(
-                input_ids=torch.tensor([token_ids], dtype=torch.long).to(device),
-                max_length=LLama2Generator.max_new_tokens,
-                do_sample=True,
-                top_p=LLama2Generator.top_p,
-                temperature=LLama2Generator.temperature,
-                repetition_penalty=LLama2Generator.repetition_penalty,
-                eos_token_id=tokenizer.eos_token_id
-            )
+        print("llama2_chat===========")
 
-        print(response_ids)
-        # Decode the response
-        answer = tokenizer.decode(response_ids[0], skip_special_tokens=True)
+        try:
+            inputs = tokenizer(query, return_tensors="pt").to(device)
+            print(inputs)
 
-        result = {
-            "id": "",
-            "content": answer
-        }
-        return Response(json.dumps(result))
+            outputs = model.generate(**inputs, max_length=512)
+            print(outputs)
+
+            if len(outputs) > 0:
+                answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
+                print(answer)
+                result = {
+                    "id": "",
+                    "content": answer
+                }
+                return Response(json.dumps(result))
+            else:
+                return "No text generated."
+        except Exception as e:
+            return f"Error: {str(e)}"
 
 
     @staticmethod
