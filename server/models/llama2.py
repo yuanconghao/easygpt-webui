@@ -79,6 +79,7 @@ class LLama2Generator:
 
             if len(outputs) > 0:
                 answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
+                print(answer)
                 result = {
                     "id": "",
                     "content": answer
