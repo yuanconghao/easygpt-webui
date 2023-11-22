@@ -49,7 +49,7 @@ class LLama2Generator:
         # 加载模型
         model = ModelUtils.load_model(
             LLama2Generator.base_model,
-            load_in_4bit=False,
+            load_in_4bit=True,
             adapter_name_or_path=LLama2Generator.adapter_name_or_path
         )
         return model
