@@ -76,7 +76,7 @@ class LLama2Generator:
             inputs = tokenizer(query, return_tensors="pt").to(device)
             print(inputs)
 
-            outputs = model.generate(**inputs, max_length=512)
+            outputs = model.generate(**inputs, max_length=1024)
             print(outputs)
 
             if len(outputs) > 0:
@@ -95,27 +95,42 @@ class LLama2Generator:
     @staticmethod
     def generate_llama2_chat(model, tokenizer, query):
         print("llama2_chat===========")
-
+        utterance_id = 0
         try:
-            inputs = tokenizer(query, return_tensors="pt").to(device)
-            print(inputs)
+            history_token_ids = torch.tensor([[tokenizer.bos_token_id]], dtype=torch.long)
+            utterance_id += 1
+            input_ids = tokenizer(query, return_tensors="pt", add_special_tokens=False).input_ids
+            eos_token_id = torch.tensor([[tokenizer.eos_token_id]], dtype=torch.long)
+            user_input_ids = torch.concat([input_ids, eos_token_id], dim=1)
+            history_token_ids = torch.concat((history_token_ids, user_input_ids), dim=1)
+            model_input_ids = history_token_ids[:, -LLama2Generator.history_max_len:].to(device)
+            with torch.no_grad():
+                outputs = model.generate(
+                    input_ids=model_input_ids,
+                    max_new_tokens=LLama2Generator.max_new_tokens,
+                    do_sample=True,
+                    top_p=LLama2Generator.top_p,
+                    temperature=LLama2Generator.temperature,
+                    repetition_penalty=LLama2Generator.repetition_penalty,
+                    eos_token_id=tokenizer.eos_token_id
+                )
+            model_input_ids_len = model_input_ids.size(1)
+            response_ids = outputs[:, model_input_ids_len:]
+            history_token_ids = torch.concat((history_token_ids, response_ids.cpu()), dim=1)
+            response = tokenizer.batch_decode(response_ids)
+            print("Assistant：" + response[0].strip().replace(tokenizer.eos_token, ""))
 
-            outputs = model.generate(**inputs, max_length=512)
-            print(outputs)
+            # Decode the response
+            answer = response[0].strip().replace(tokenizer.eos_token, "")
 
-            if len(outputs) > 0:
-                answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
-                print(answer)
-                result = {
-                    "id": "",
-                    "content": answer
-                }
-                return Response(json.dumps(result))
-            else:
-                return "No text generated."
+            result = {
+                "id": "",
+                "content": answer
+            }
+            return Response(json.dumps(result))
+
         except Exception as e:
             return f"Error: {str(e)}"
-
 
     @staticmethod
     def generate_llama2_chat_ids(model, tokenizer, query, history_token_ids=None):
@@ -130,7 +145,6 @@ class LLama2Generator:
 
         print(tokenizer.encode("helo", add_special_tokens=True))
         print(tokenizer.encode("helo, I'm glad you're here! How are you?", add_special_tokens=True))
-
 
         history_token_ids.append(user_input_ids)
         print("history_token_ids3:", history_token_ids)
