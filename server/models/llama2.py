@@ -66,7 +66,13 @@ class LLama2Generator:
         return tokenizer
 
     @staticmethod
-    def generate_llama2(model, tokenizer, query):
+    def generate_llama2_text(model, tokenizer, query):
+        inputs = tokenizer(query, return_tensors="pt").to(device)
+        outputs = model.generate(**inputs, max_new_tokens=128)
+        return tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    @staticmethod
+    def generate_llama2_chat(model, tokenizer, query):
         # 记录所有历史记录
         history_token_ids = torch.tensor([[tokenizer.bos_token_id]], dtype=torch.long)
 
@@ -94,4 +100,5 @@ class LLama2Generator:
         history_token_ids = torch.concat((history_token_ids, response_ids.cpu()), dim=1)
         print(history_token_ids)
         response = tokenizer.batch_decode(response_ids)
+        print(response)
         return response
