@@ -109,6 +109,9 @@ class Backend_Api:
                 send_images = send_images.replace("'", "\"")
                 images = json.loads(send_images)
 
+            if not session_id or session_id == "undefined":
+                session_id = None
+
             messages = Prompter.build_messages(model, conversation, prompt, images)
             print("messages==================")
             print(messages)
@@ -122,12 +125,16 @@ class Backend_Api:
             elif model == "gpt-4-vision-preview":
                 print("gpt4v==================")
                 return GPTGenerator.request_vision(messages)
-            elif model == "llama2":
+            elif model == "llama2-7b":
                 print("llama2================")
                 if not self.config["llama2"]["use"]:
                     return "LLama2 Not Supported, Needs to Setting Config config[llama2][use] true"
-                # return LLama2Generator.generate_llama2(self.model, self.tokenizer, messages)
                 return LLama2Generator.generate_llama2_text(self.model, self.tokenizer, messages)
+            elif model == "llama2-7b-chat":
+                print("llama2================")
+                if not self.config["llama2"]["use"]:
+                    return "LLama2 Not Supported, Needs to Setting Config config[llama2][use] true"
+                return LLama2Generator.generate_llama2_chat(self.model, self.tokenizer, messages, session_id)
             elif model == "gpt-assistant-ai-teacher":
                 print("assistant=================")
                 return AssistantGenerator.request_assitant(model, messages, session_id)

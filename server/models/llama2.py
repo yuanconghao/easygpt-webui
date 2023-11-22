@@ -93,10 +93,12 @@ class LLama2Generator:
 
     @staticmethod
     def generate_llama2_chat(model, tokenizer, query, history_token_ids=None):
+        print("history_token_ids1:", history_token_ids)
         if history_token_ids is None:
             # Initialize conversation history if not provided
             history_token_ids = [tokenizer.encode(tokenizer.bos_token, add_special_tokens=False)]
 
+        print("history_token_ids2:", history_token_ids)
         # Append user input to history
         user_input_ids = tokenizer.encode(query, add_special_tokens=True)
         history_token_ids.append(user_input_ids)
@@ -121,7 +123,7 @@ class LLama2Generator:
 
         # Decode the response
         answer = tokenizer.decode(response_ids[0], skip_special_tokens=True)
-
+        print("history_token_ids3:", history_token_ids)
         result = {
             "id": history_token_ids,
             "content": answer
