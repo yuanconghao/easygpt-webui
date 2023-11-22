@@ -92,33 +92,38 @@ class LLama2Generator:
             return f"Error: {str(e)}"
 
     @staticmethod
-    def generate_llama2_chat(model, tokenizer, query):
-        # 记录所有历史记录
-        history_token_ids = torch.tensor([[tokenizer.bos_token_id]], dtype=torch.long)
+    def generate_llama2_chat(model, tokenizer, query, history_token_ids=None):
+        if history_token_ids is None:
+            # Initialize conversation history if not provided
+            history_token_ids = [tokenizer.encode(tokenizer.bos_token, add_special_tokens=False)]
 
-        # 开始对话
-        utterance_id = 0  # 记录当前是第几轮对话，为了契合chatglm的数据组织格式
-        user_input = query
-        utterance_id += 1
-        input_ids = tokenizer(user_input, return_tensors="pt", add_special_tokens=False).input_ids
-        eos_token_id = torch.tensor([[tokenizer.eos_token_id]], dtype=torch.long)
-        user_input_ids = torch.concat([input_ids, eos_token_id], dim=1)
-        history_token_ids = torch.concat((history_token_ids, user_input_ids), dim=1)
-        model_input_ids = history_token_ids[:, -LLama2Generator.history_max_len:].to(device)
+        # Append user input to history
+        user_input_ids = tokenizer.encode(query, add_special_tokens=True)
+        history_token_ids.append(user_input_ids)
+
+        # Flatten the history_token_ids list
+        flat_history = [item for sublist in history_token_ids for item in sublist]
+
+        # Generate a response
         with torch.no_grad():
-            outputs = model.generate(
-                input_ids=model_input_ids,
-                max_new_tokens=LLama2Generator.max_new_tokens,
+            response_ids = model.generate(
+                input_ids=torch.tensor([flat_history], dtype=torch.long).to(device),
+                max_length=LLama2Generator.max_new_tokens,
                 do_sample=True,
                 top_p=LLama2Generator.top_p,
                 temperature=LLama2Generator.temperature,
                 repetition_penalty=LLama2Generator.repetition_penalty,
                 eos_token_id=tokenizer.eos_token_id
             )
-        model_input_ids_len = model_input_ids.size(1)
-        response_ids = outputs[:, model_input_ids_len:]
-        history_token_ids = torch.concat((history_token_ids, response_ids.cpu()), dim=1)
-        print(history_token_ids)
-        response = tokenizer.batch_decode(response_ids)
-        print(response)
-        return response
+
+        # Append response to history
+        history_token_ids.append(response_ids[0].tolist())
+
+        # Decode the response
+        answer = tokenizer.decode(response_ids[0], skip_special_tokens=True)
+
+        result = {
+            "id": history_token_ids,
+            "content": answer
+        }
+        return Response(json.dumps(result))
