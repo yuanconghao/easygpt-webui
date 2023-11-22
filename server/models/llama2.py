@@ -65,6 +65,7 @@ class LLama2Generator:
             # llama不支持fast
             use_fast=False,
         )
+
         return tokenizer
 
     @staticmethod
@@ -92,6 +93,10 @@ class LLama2Generator:
             return f"Error: {str(e)}"
 
     @staticmethod
+    def generate_llama2_chat1(model, tokenizer, messages):
+        pass
+
+    @staticmethod
     def generate_llama2_chat(model, tokenizer, query, history_token_ids=None):
         print("history_token_ids1:", history_token_ids)
         if history_token_ids is None:
@@ -103,6 +108,8 @@ class LLama2Generator:
         user_input_ids = tokenizer.encode(query, add_special_tokens=True)
 
         print(tokenizer.encode("helo", add_special_tokens=True))
+        print(tokenizer.encode("helo, I'm glad you're here! How are you?", add_special_tokens=True))
+
 
         history_token_ids.append(user_input_ids)
         print("history_token_ids3:", history_token_ids)
