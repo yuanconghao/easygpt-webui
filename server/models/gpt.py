@@ -8,12 +8,6 @@ import openai
 class GPTGenerator:
 
     @staticmethod
-    def request_assitant(model, messages):
-
-
-        return Response()
-
-    @staticmethod
     def request_gpt(model, messages, stream):
         """
         request gpt
@@ -31,7 +25,12 @@ class GPTGenerator:
             return GPTGenerator.compact_response(response)
 
         answer = response.choices[0].message.content
-        return Response(answer)
+
+        result = {
+            "id": "",
+            "content": answer
+        }
+        return Response(result)
 
     @staticmethod
     def request_dalle(messages):
@@ -48,7 +47,12 @@ class GPTGenerator:
         revised_prompt = response.data[0].revised_prompt
         image_url = response.data[0].url
         link_image_url = f"![图片)]({image_url})"
-        return Response(revised_prompt + "\n\n" + link_image_url)
+
+        result = {
+            "id": "",
+            "content": revised_prompt + "\n\n" + link_image_url
+        }
+        return Response(result)
 
     @staticmethod
     def request_vision(messages):
@@ -69,7 +73,11 @@ class GPTGenerator:
                 continue
             link_image_url += f"![图片)]({content['image_url']['url']}) "
 
-        return Response(answer  + "\n\n" + link_image_url)
+        result = {
+            "id": "",
+            "content": answer + "\n\n" + link_image_url
+        }
+        return Response(result)
 
     @staticmethod
     def compact_response(response: Union[dict, Generator]) -> Response:

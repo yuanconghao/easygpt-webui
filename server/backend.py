@@ -100,6 +100,7 @@ class Backend_Api:
         try:
             print(request.json)
             model = request.json['model']
+            session_id = request.json['session_id']
             conversation = request.json['meta']['content']['conversation']
             prompt = request.json['meta']['content']['parts'][0]
             send_images = request.json["send_images"]
@@ -128,7 +129,7 @@ class Backend_Api:
                 return LLama2Generator.generate_llama2(self.model, self.tokenizer, messages)
             elif model == "gpt-assistant-ai-teacher":
                 print("assistant=================")
-                return AssistantGenerator.request_assitant(model, messages)
+                return AssistantGenerator.request_assitant(model, messages, session_id)
             else:
                 print("gpt===============")
                 return GPTGenerator.request_gpt(model, messages, stream)

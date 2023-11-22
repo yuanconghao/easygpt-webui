@@ -7,6 +7,8 @@ class Prompter:
         """
         if model == "dall-e-3":
             return prompt['content']
+        elif model == "gpt-assistant-ai-teacher":
+            return prompt['content']
         elif model == "gpt-4-vision-preview":
             new_content = []
 
