@@ -67,7 +67,9 @@ class LLama2Generator:
 
     @staticmethod
     def generate_llama2_text(model, tokenizer, query):
+        print("llama2_text===========")
         inputs = tokenizer(query, return_tensors="pt").to(device)
+        print(inputs)
         outputs = model.generate(**inputs, max_new_tokens=512)
         answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
         return answer

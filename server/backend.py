@@ -127,7 +127,7 @@ class Backend_Api:
                 if not self.config["llama2"]["use"]:
                     return "LLama2 Not Supported, Needs to Setting Config config[llama2][use] true"
                 # return LLama2Generator.generate_llama2(self.model, self.tokenizer, messages)
-                    return LLama2Generator.generate_llama2_text(self.model, self.tokenizer, messages)
+                return LLama2Generator.generate_llama2_text(self.model, self.tokenizer, messages)
             elif model == "gpt-assistant-ai-teacher":
                 print("assistant=================")
                 return AssistantGenerator.request_assitant(model, messages, session_id)
