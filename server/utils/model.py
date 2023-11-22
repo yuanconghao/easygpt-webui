@@ -8,15 +8,16 @@ class ModelUtils(object):
     @classmethod
     def load_model(cls, model_name_or_path, load_in_4bit=False, adapter_name_or_path=None):
         # 是否使用4bit量化进行推理
+        quantization_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype=torch.float16,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_use_double_quant=True,
+            llm_int8_threshold=6.0,
+            llm_int8_has_fp16_weight=False,
+        )
         if load_in_4bit:
-            quantization_config = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_compute_dtype=torch.float16,
-                bnb_4bit_use_double_quant=True,
-                bnb_4bit_quant_type="nf4",
-                llm_int8_threshold=6.0,
-                llm_int8_has_fp16_weight=False,
-            )
+            pass
         else:
             quantization_config = None
 

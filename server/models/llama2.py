@@ -2,6 +2,7 @@ from transformers import AutoTokenizer
 from peft import PeftModel
 import torch
 from server.utils.model import ModelUtils
+from flask import request, Response, stream_with_context, send_file, url_for
 
 if torch.cuda.is_available():
     device = "cuda"
@@ -68,12 +69,25 @@ class LLama2Generator:
     @staticmethod
     def generate_llama2_text(model, tokenizer, query):
         print("llama2_text===========")
-        inputs = tokenizer(query, return_tensors="pt").to(device)
-        print(inputs)
-        outputs = model.generate(**inputs, max_new_tokens=512)
-        print(outputs)
-        answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        return answer
+
+        try:
+            inputs = tokenizer(query, return_tensors="pt").to(device)
+            print(inputs)
+
+            outputs = model.generate(**inputs, max_length=512)
+            print(outputs)
+
+            if len(outputs) > 0:
+                answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
+                result = {
+                    "id": "",
+                    "content": answer
+                }
+                return Response(result)
+            else:
+                return "No text generated."
+        except Exception as e:
+            return f"Error: {str(e)}"
 
     @staticmethod
     def generate_llama2_chat(model, tokenizer, query):
