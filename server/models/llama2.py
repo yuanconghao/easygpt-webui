@@ -71,6 +71,7 @@ class LLama2Generator:
         inputs = tokenizer(query, return_tensors="pt").to(device)
         print(inputs)
         outputs = model.generate(**inputs, max_new_tokens=512)
+        print(outputs)
         answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
         return answer
 
