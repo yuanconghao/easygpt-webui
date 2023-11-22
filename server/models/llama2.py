@@ -101,6 +101,9 @@ class LLama2Generator:
         print("history_token_ids2:", history_token_ids)
         # Append user input to history
         user_input_ids = tokenizer.encode(query, add_special_tokens=True)
+
+        print(tokenizer.encode("helo", add_special_tokens=True))
+
         history_token_ids.append(user_input_ids)
         print("history_token_ids3:", history_token_ids)
 
