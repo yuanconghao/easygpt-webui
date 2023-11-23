@@ -139,7 +139,6 @@ const ask_gpt = async (message) => {
             console.log(chunk)
 
             if(model_name == "gpt-assistant-ai-teacher") {
-                alert("hello")
                 chunk = JSON.parse(chunk)
                 chunk_id = chunk.id
                 chunk = chunk.content
