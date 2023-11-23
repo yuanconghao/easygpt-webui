@@ -30,7 +30,7 @@ class GPTGenerator:
             "id": "",
             "content": answer
         }
-        return Response(json.dumps(result))
+        return Response(answer)
 
     @staticmethod
     def request_dalle(messages):
@@ -52,7 +52,7 @@ class GPTGenerator:
             "id": "",
             "content": revised_prompt + "\n\n" + link_image_url
         }
-        return Response(json.dumps(result))
+        return Response(revised_prompt + "\n\n" + link_image_url)
 
     @staticmethod
     def request_vision(messages):
@@ -77,7 +77,7 @@ class GPTGenerator:
             "id": "",
             "content": answer + "\n\n" + link_image_url
         }
-        return Response(json.dumps(result))
+        return Response(answer + "\n\n" + link_image_url)
 
     @staticmethod
     def compact_response(response: Union[dict, Generator]) -> Response:

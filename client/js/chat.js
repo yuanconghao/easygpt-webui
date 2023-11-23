@@ -94,6 +94,9 @@ const ask_gpt = async (message) => {
         window.scrollTo(0, 0);
         // alert(session_id.innerHTML)
         console.log(session_id.innerHTML)
+        console.log(document.getElementById("switch").checked)
+        stream_value = document.getElementById("switch").checked
+        model_name = model.options[model.selectedIndex].value
         const response = await fetch(`${url_prefix}/backend-api/v2/conversation`, {
             method: `POST`,
             signal: window.controller.signal,
@@ -113,7 +116,7 @@ const ask_gpt = async (message) => {
                     id: window.token,
                     content: {
                         conversation: await get_conversation(window.conversation_id),
-                        internet_access: document.getElementById("switch").checked,
+                        internet_access: stream_value,
                         content_type: "text",
                         parts: [
                             {
@@ -132,12 +135,15 @@ const ask_gpt = async (message) => {
             const {value, done} = await reader.read();
             if (done) break;
 
-            chunk_res = decodeUnicode(new TextDecoder().decode(value));
-            console.log(chunk_res)
-            chunk_res = JSON.parse(chunk_res)
-            chunk = chunk_res.content
-            chunk_id = chunk_res.id
-            session_id.innerHTML = chunk_id
+            chunk = decodeUnicode(new TextDecoder().decode(value));
+            console.log(chunk)
+
+            if(model_name == "gpt-assistant-ai-teacher") {
+                alert("hello")
+                chunk = JSON.parse(chunk)
+                chunk_id = chunk.id
+                chunk = chunk.content
+            }
 
             if (
                 chunk.includes(`<form id="challenge-form" action="${url_prefix}/backend-api/v2/conversation?`)
@@ -146,7 +152,6 @@ const ask_gpt = async (message) => {
             }
 
             text += chunk;
-
             document.getElementById(`gpt_${window.token}`).innerHTML = markdown.render(text);
             document.querySelectorAll(`code`).forEach((el) => {
                 hljs.highlightElement(el);

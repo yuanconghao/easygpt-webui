@@ -63,7 +63,7 @@
 		line-height: 2;
 	}
 	.message .content img {
-		max-width: 450px;
+		max-width: 300px;
 		/*max-height: 400px;*/
 	}
 }
