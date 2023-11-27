@@ -15,7 +15,7 @@ class GPTGenerator:
         response = openai.chat.completions.create(
             model=model,
             messages=messages,
-            temperature=0.5,
+            temperature=0,
             max_tokens=2048,
             stream=stream,
         )
