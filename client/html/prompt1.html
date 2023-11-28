@@ -137,9 +137,9 @@
             <div class="ui ignored warning message prompt_raw">
                 <p></p>
             </div>
-            <div class="ui ignored error message prompt_assistant">
-                <p></p>
-            </div>
+{#            <div class="ui ignored error message prompt_assistant">#}
+{#                <p></p>#}
+{#            </div>#}
 
         </div>
     </div>
@@ -227,51 +227,8 @@
                 prompt_raw_text += ".";
             }
 
-
-            prompt_assistant_text = `
-本节课教材信息：
-课程类型：体验课
-课程级别：Level1
-课程话题：Colorful Toys
-课程题目：What Color Is the Doll?
-核心词汇：a pink doll, a brown teddy bear, a blue truck, a green monster
-核心句法：Do you like this pink doll. Yes, I do./ No, I don't.
-
-本课共有3个stage，根据每个stage的要求 进行相关图片展示、对话练习。
-
-Stage 1
-图片内容：男孩手里拿着a brown teddy bear, 在说 ”it’s a brown teddy bear”
-教学目标：Student can understand the meaning, form and pronunciation of the word.
-教学流程：
-Present the word: Display this picture in conversation “a brown teddy bear”.
-Practice the word: Have the student repeat check the student’s pronunciation. If there is any mistake , correct it.
-Meaning check: Ask the student, What is this in Timmy’s hand? Check the answer, and if there is any mistake, please correct it.
-
-Make sure this part all goals have completed, start next stage.
-
-Stage 2
-图片内容：男孩手里拿着a brown teddy bear, 在问女孩”Do you like this brown teddy bear?” 女孩回答说 “No, I don’t.”
-教学目标：Student can comprehend the meaning of the dialogue and read the sentences.
-教学流程：
-Present the dialogue: Display this picture in conversation. Introduce the setting and the characters. Ask the student who they are and what Timmy is holding. Have the student listen to the audio.
-Practice the dialogue: Have the student repeat the sentences to understand the pronunciation and meaning. Continue until the student can read them accurately and fluently.
-Produce the dialogue: Engage in a role-play with the student.
-
-Make sure this part all goals have completed, start next stage.
-
-Stage 3
-Action:
-图片介绍：图中有四种玩具”a brown bear”,”a green monster”,”a red doll”,”a blue truck” 下方是需要练习的句型 “Do you like … ?” “Yes, I do. / No, I don’t.”
-教学目标：Student can apply prescribed sentence structures to express preferences or dislikes.教学流程：
-Present the Activity: Show the student the picture and introduce the associated sentence structures.
-Produce the Dialogue: Guide the student in asking questions using the sentence structure "Do you like..." Encourage the student to respond based on his/her own opinion. Facilitate role-switching during the activity, with a focus on the student's pronunciation and the correct usage of the sentence structures.
-Give Feedback: Assess the student's performance. Provide constructive feedback and correct any mistakes.
-
-Make sure this part all goals have completed, this lesson finish!
-            `
             $(".prompt p").html(prompt_text);
             $(".prompt_raw p").html(prompt_raw_text);
-            $(".prompt_assistant p").html(prompt_assistant_text);
         });
     });
 </script>
