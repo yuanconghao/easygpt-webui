@@ -176,3 +176,39 @@ class LLama2Generator:
             "content": answer
         }
         return Response(json.dumps(result))
+
+    import textwrap
+
+    def display_response(prompt, generated_response, max_width=120):
+        # Function to print a bordered text box
+        def print_boxed(text):
+            lines = textwrap.wrap(text, max_width)  # Wrap text to desired width
+            border = '+' + '-' * (max_width + 2) + '+'
+            print(border)
+            for line in lines:
+                print('| ' + line.ljust(max_width) + ' |')
+            print(border)
+
+        # Extract the instruction and the patient's query from the prompt
+        instruction_start = prompt.find("[INST]") + len("[INST]")
+        instruction_end = prompt.find("[/INST]")
+        instruction = prompt[instruction_start:instruction_end].strip()
+
+        prefix = "As a medical doctor, respond to this patient query: Patient: "
+        if instruction.startswith(prefix):
+            instruction = instruction[len(prefix):].strip()
+
+        # Extract the generated text from the response dictionary
+        response_text = generated_response[0]['generated_text']
+
+        # Extract the medical doctor's response from the generated text
+        doctor_response_start = response_text.find("[/INST]") + len("[/INST]")
+        doctor_response = response_text[doctor_response_start:].strip()
+
+        # Display the information with a wrapper
+        print("Human:")
+        print_boxed(instruction)
+        print("\nAssistance:")
+        print_boxed(doctor_response)
+
+
