@@ -100,6 +100,8 @@
                 {#                <h4>挑战：</h4>#}
             </div>
 
+            <div class="del_conversation" style="margin-top: 10px;">
+            </div>
         </div>
     </div>
 </div>
@@ -119,6 +121,7 @@
             $('.scene_title').empty();
             $('.goal_challenge').empty();
             $('.goal_challenge_en').empty();
+            $('.del_conversation').empty();
 
             $('.scene_title').append('<h4><font color="#DB2829">' + ai_teacher_json[type]['scene'] + '</font></h4>');
 
@@ -133,6 +136,8 @@
             ai_teacher_json[type]['challenge'].forEach(function (item) {
                 $('.goal_challenge_en').append('<li>' + item['en'] + '</li>');
             });
+
+            $('.del_conversation').append('<a href="' + ai_teacher_json[type]['preview'] + '" target="_blank">历史记录删除</a>');
         });
     });
 

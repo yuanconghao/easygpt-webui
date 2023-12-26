@@ -1,6 +1,7 @@
 var ai_teacher_json = {
     "introduce": {
         "src": "https://online-kcs.51talk.com/chatbot/nGbxB2v4bEBPIkQR",
+        "preview": "https://online-kcs.51talk.com/chat/nGbxB2v4bEBPIkQR",
         "scene": "互相介绍",
         "goal": {
             "cn": "向你的朋友介绍你自己",
@@ -27,6 +28,7 @@ var ai_teacher_json = {
     },
     "freely": {
         "src": "https://online-kcs.51talk.com/chatbot/3JM8zxbh7XTjsH6o",
+        "preview": "https://online-kcs.51talk.com/chat/3JM8zxbh7XTjsH6o",
         "scene": "自由对话",
         "goal": {
             "cn": "自由地聊天",
@@ -49,6 +51,7 @@ var ai_teacher_json = {
     },
     "interest": {
         "src": "https://online-kcs.51talk.com/chatbot/DzLWTb5WLUzBPtte",
+        "preview": "https://online-kcs.51talk.com/chat/DzLWTb5WLUzBPtte",
         "scene": "讨论兴趣爱好",
         "goal": {
             "cn": "讨论兴趣爱好",
@@ -75,6 +78,7 @@ var ai_teacher_json = {
     },
     "food": {
         "src": "https://online-kcs.51talk.com/chatbot/LFsV8nReFyAtnS5L",
+        "preview": "https://online-kcs.51talk.com/chat/LFsV8nReFyAtnS5L",
         "scene": "讨论食物",
         "goal": {
             "cn": "点餐，聊一聊食物",
@@ -101,6 +105,7 @@ var ai_teacher_json = {
     },
     "order_food": {
         "src": "https://online-kcs.51talk.com/chatbot/yJJTDUshKarcDGnm",
+        "preview": "https://online-kcs.51talk.com/chat/yJJTDUshKarcDGnm",
         "scene": "在餐厅点餐",
         "goal": {
             "cn": "点菜",
@@ -127,6 +132,7 @@ var ai_teacher_json = {
     },
     "shopping": {
         "src": "https://online-kcs.51talk.com/chatbot/xncu5wP6jtWRkroL",
+        "preview": "https://online-kcs.51talk.com/chat/xncu5wP6jtWRkroL",
         "scene": "购物买衣服",
         "goal": {
             "cn": "询问一个特定的商品，并购买",
@@ -153,6 +159,7 @@ var ai_teacher_json = {
     },
     "ask_directions": {
         "src": "https://online-kcs.51talk.com/chatbot/F0D4zwkTLeXrv03y",
+        "preview": "https://online-kcs.51talk.com/chat/F0D4zwkTLeXrv03y",
         "scene": "问路",
         "goal": {
             "cn": "询问附近旅游景点的方向",
@@ -179,6 +186,7 @@ var ai_teacher_json = {
     },
     "weather": {
         "src": "https://online-kcs.51talk.com/chatbot/dY24ee86uJ6WUt03",
+        "preview": "https://online-kcs.51talk.com/chat/dY24ee86uJ6WUt03",
         "scene": "讨论天气",
         "goal": {
             "cn": "讨论天气和公园活动",
