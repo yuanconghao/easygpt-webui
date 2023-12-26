@@ -35,6 +35,10 @@ class Website:
                 'function': self._asr,
                 'methods': ['GET', 'POST']
             },
+            '/teacher/': {
+                'function': self._teacher,
+                'methods': ['GET', 'POST']
+            },
             '/change-language': {
                 'function': self.change_language,
                 'methods': ['POST']
@@ -76,6 +80,10 @@ class Website:
     def _asr(self):
         print("asr=========")
         return render_template('asr.html', url_prefix=self.url_prefix)
+
+    def _teacher(self):
+        print("teacher=========")
+        return render_template('teacher.html', url_prefix=self.url_prefix)
 
     def change_language(self):
         data = request.get_json()

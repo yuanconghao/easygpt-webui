@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0"/>
+    <meta name="description" content="A conversational AI system that listens, learns, and challenges"/>
+    <meta property="og:title" content="ChatGPT"/>
+    <meta property="og:image" content="https://openai.com/content/images/2022/11/ChatGPT.jpg"/>
+    <meta
+            property="og:description"
+            content="A conversational AI system that listens, learns, and challenges"/>
+    <meta property="og:url" content="https://chat.acy.dev"/>
+    {#    <link rel="stylesheet" href="{{ url_for('bp.static', filename='css/style.css') }}"/>#}
+    <link rel="stylesheet" href="{{ url_for('bp.static', filename='semantic/semantic.min.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('bp.static', filename='microphone/microphone.css') }}"/>
+    <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="{{ url_for('bp.static', filename='img/apple-touch-icon.png') }}"/>
+    <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="{{ url_for('bp.static', filename='img/favicon-32x32.png') }}"/>
+    <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="{{ url_for('bp.static', filename='img/favicon-16x16.png') }}"/>
+    <link rel="manifest" href="{{ url_for('bp.static', filename='img/site.webmanifest') }}"/>
+    <script src="{{ url_for('bp.static', filename='js/speaking_teacher.js') }}"></script>
+    <script src="{{ url_for('bp.static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('bp.static', filename='semantic/semantic.min.js') }}"></script>
+    <title>EasyGPT--ASR</title>
+</head>
+
+<body data-urlprefix="{{ url_prefix }}">
+<div class="ui internally divided grid">
+    <div class="row">
+        <div class="three wide column">
+            <div class="ui vertical menu" style="min-height: 660px;height: 100%;">
+                <a class="item" href="/easygpt/teacher/">
+                    <i class="home icon"></i>首页
+                </a>
+                <a class="item ai_teacher" data-type="introduce">
+                    <i class="tachometer alternate icon"></i>互相介绍
+                </a>
+                <a class="item ai_teacher" data-type="freely">
+                    <i class="tachometer alternate icon"></i>自由对话
+                </a>
+                <a class="item ai_teacher" data-type="food">
+                    <i class="tachometer alternate icon"></i>讨论食物
+                </a>
+                <a class="item ai_teacher" data-type="interest">
+                    <i class="eye icon"></i>讨论兴趣和爱好
+                </a>
+            </div>
+        </div>
+        <div class="ten wide column">
+            <div class="ai_teacher_main">
+                <div class="ui message">
+                <h2>欢迎来到51talk口语对话练习【口语教练】平台</h2>
+            </div>
+            </div>
+            <iframe
+                    src=""
+                    id="ai_teacher_frame"
+                    style="width: 100%; height: 100%; min-height: 700px"
+                    frameborder="0"
+                    allow="microphone">
+            </iframe>
+        </div>
+        <div class="three wide column">
+            <div class="goal_challenge" style="margin-top: 20px;">
+{#                <h4>目标：</h4>#}
+{#                <ul class="ui list" style="margin-top: 20px;">#}
+{#                </ul>#}
+{#                <h4>挑战：</h4>#}
+            </div>
+
+            <div class="goal_challenge_en" style="margin-top: 20px;">
+{#                <h4>目标：</h4>#}
+{#                <ul class="ui list" style="margin-top: 20px;">#}
+{#                </ul>#}
+{#                <h4>挑战：</h4>#}
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+<!-- scripts -->
+<script>
+
+    $(function () {
+        $(".ai_teacher").click(function () {
+            var type = $(this).data('type');
+            var url = ai_teacher_json[type]['src'];
+
+            $('.ai_teacher_main').empty();
+
+            $('#ai_teacher_frame').attr('src', url);
+
+
+            $('.goal_challenge').empty();
+            $('.goal_challenge_en').empty();
+
+            $('.goal_challenge').append('<h4>目标：</h4><p>' + ai_teacher_json[type]['goal']['cn'] + '</p>');
+            $('.goal_challenge').append('<h4>挑战：</h4>');
+            ai_teacher_json[type]['challenge'].forEach(function (item) {
+                $('.goal_challenge').append('<li>' + item['cn'] + '</li>');
+            });
+
+            $('.goal_challenge_en').append('<h4>Goal：</h4><p>' + ai_teacher_json[type]['goal']['en'] + '</p>');
+            $('.goal_challenge_en').append('<h4>Challenge：</h4>');
+            ai_teacher_json[type]['challenge'].forEach(function (item) {
+                $('.goal_challenge_en').append('<li>' + item['en'] + '</li>');
+            });
+        });
+    });
+
+</script>
+<script src="{{ url_for('bp.static', filename='js/icons.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/markdown-it@latest/dist/markdown-it.min.js"></script>
+
+</html>
