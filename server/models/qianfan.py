@@ -30,8 +30,36 @@ class QianfanGenerator:
     def request_qianfan(model, messages, stream):
         if model == "qianfan_ernie_bot_8k":
             return QianfanGenerator.generate_ernie_bot_8k(messages, stream)
+        elif model == "qianfan_ernie_bot_4":
+            return QianfanGenerator.generate_ernie_bot_4(messages, stream)
         elif model == "qianfan_llama2-7b-food-v1":
             return QianfanGenerator.generate_llama2_chat_food(messages, stream)
+
+    @staticmethod
+    def generate_ernie_bot_4(messages, stream):
+        url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions_pro?access_token=" + QianfanGenerator.get_access_token()
+        query_messages = {
+            "messages": messages
+        }
+        if stream:
+            query_messages["stream"] = True
+
+        payload = json.dumps(query_messages)
+
+        headers = {
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload, stream=stream)
+        print(response)
+
+        if stream:
+            print(type(response))
+            return QianfanGenerator.compact_response(response)
+
+        answer = response.json()['result']
+
+        return Response(answer)
 
     @staticmethod
     def generate_ernie_bot_8k(messages, stream):
@@ -111,7 +139,7 @@ class QianfanGenerator:
                     print(chunk)
                     if chunk.startswith('data:'):
                         completion = json.loads(chunk[5:])
-                        if not completion['is_end']:
+                        if not completion['is_end'] or completion['result']:
                             # yield json.dumps(completion)
                             yield completion['result']
 
