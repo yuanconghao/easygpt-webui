@@ -48,7 +48,7 @@
 <div class="main-container">
     <div class="ui vertical icon menu" style="height:100%; margin-right: 5px;">
         <a class="item active">
-            <i class="home icon" data-content="主页" data-variation="wide"></i>
+            <i class="home icon easygpt_menu_home" data-content="主页" data-variation="wide"></i>
         </a>
         <a class="item">
             <i class="microphone icon easygpt_menu easygpt_menu_asr" data-content="ASR[语音转文字]" data-variation="wide"></i>
@@ -230,6 +230,9 @@
     window.conversation_id = "{{ chat_id }}";
     $(function () {
         $('.easygpt_menu').popup();
+        $('.easygpt_menu_home').click(function (){
+            window.open('/easygpt/', '_self');
+        });
         $('.easygpt_menu_asr').click(function (){
             window.open('/easygpt/asr/', '_blank');
         });
