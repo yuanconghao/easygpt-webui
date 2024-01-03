@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -12,6 +12,7 @@
             content="A conversational AI system that listens, learns, and challenges"/>
     <meta property="og:url" content="https://chat.acy.dev"/>
     <link rel="stylesheet" href="{{ url_for('bp.static', filename='css/style.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('bp.static', filename='semantic/semantic.min.css') }}"/>
     <link
             rel="apple-touch-icon"
             sizes="180x180"
@@ -28,8 +29,9 @@
             href="{{ url_for('bp.static', filename='img/favicon-16x16.png') }}"/>
     <link rel="manifest" href="{{ url_for('bp.static', filename='img/site.webmanifest') }}"/>
     <script src="{{ url_for('bp.static', filename='js/jquery.min.js') }}"></script>
-{#    <script src="{{ url_for('bp.static', filename='js/auto-render.min.js') }}"></script>#}
-{#    <script src="{{ url_for('bp.static', filename='js/katex.min.js') }}"></script>#}
+    <script src="{{ url_for('bp.static', filename='semantic/semantic.min.js') }}"></script>
+    {#    <script src="{{ url_for('bp.static', filename='js/auto-render.min.js') }}"></script>#}
+    {#    <script src="{{ url_for('bp.static', filename='js/katex.min.js') }}"></script>#}
     <link
             rel="stylesheet"
             href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/styles/base16/dracula.min.css"/>
@@ -44,6 +46,23 @@
 
 <body data-urlprefix="{{ url_prefix }}">
 <div class="main-container">
+    <div class="ui vertical icon menu" style="height:100%; margin-right: 8px;">
+        <a class="item active">
+            <i class="home icon" data-content="主页" data-variation="wide"></i>
+        </a>
+        <a class="item">
+            <i class="microphone icon easygpt_menu easygpt_menu_asr" data-content="ASR[语音转文字]" data-variation="wide"></i>
+        </a>
+        <a class="item">
+            <i class="volume up icon easygpt_menu easygpt_menu_tts" data-content="TTS[文字转语音]" data-variation="wide"></i>
+        </a>
+        <a class="item">
+            <i class="bell icon easygpt_menu easygpt_menu_prompt" data-content="Lesson Prompt" data-variation="wide"></i>
+        </a>
+        <a class="item">
+            <i class="user secret icon easygpt_menu easygpt_menu_teacher" data-content="AI情景对话" data-variation="wide"></i>
+        </a>
+    </div>
     <div class="box sidebar">
         <div class="top">
             <button class="button" onclick="new_conversation()">
@@ -57,19 +76,19 @@
                 <i class="fa-regular fa-trash"></i>
                 <span>{{ _('Clear Conversations') }}</span>
             </button>
-            <button class="button" onclick="window.open('/easygpt/prompt', '_blank');">
-                <i class="fa-regular fa-bell"></i>
-                <span>{{ _('Lesson Prompt') }}</span>
-            </button>
-            <div class="divider"></div>
-            <button class="button" onclick="window.open('/easygpt/asr', '_blank');">
-                <i class="fa-regular fa-microphone"></i>
-                <span>{{ _('ASR[语音转文字]') }}</span>
-            </button>
-            <button class="button" onclick="window.open('/easygpt/tts', '_blank');">
-                <i class="fa-regular fa-volume"></i>
-                <span>{{ _('TTS[文字转语音]') }}</span>
-            </button>
+{#            <button class="button" onclick="window.open('/easygpt/prompt', '_blank');">#}
+{#                <i class="fa-regular fa-bell"></i>#}
+{#                <span>{{ _('Lesson Prompt') }}</span>#}
+{#            </button>#}
+{#            <div class="divider"></div>#}
+{#            <button class="button" onclick="window.open('/easygpt/asr', '_blank');">#}
+{#                <i class="fa-regular fa-microphone"></i>#}
+{#                <span>{{ _('ASR[语音转文字]') }}</span>#}
+{#            </button>#}
+{#            <button class="button" onclick="window.open('/easygpt/tts', '_blank');">#}
+{#                <i class="fa-regular fa-volume"></i>#}
+{#                <span>{{ _('TTS[文字转语音]') }}</span>#}
+{#            </button>#}
             <div class="api-key-container hidden" id="api-key-container">
                 <button id="show-api-key-button" class="button">
                     <i class="fa-regular fa-key"></i>
@@ -127,12 +146,12 @@
                     <div class="field">
                         <select class="dropdown" name="model" id="model">
                             <optgroup label="GPT">
-{#                                <option value="gpt-3.5-turbo">GPT-3.5-turbo(4K)</option>#}
+                                {#                                <option value="gpt-3.5-turbo">GPT-3.5-turbo(4K)</option>#}
                                 <option value="gpt-3.5-turbo-16k">GPT-3.5-turbo-16K</option>
                                 {#										<option value="gpt-3.5-turbo-0301">GPT-3.5-turbo-0301</option>#}
                                 {#										<option value="gpt-3.5-turbo-16k">GPT-3.5-turbo-16k</option>#}
                                 <option value="gpt-4">GPT-4(8K)</option>
-{#                                <option value="gpt-4-32k">GPT-4(32K)</option>#}
+                                {#                                <option value="gpt-4-32k">GPT-4(32K)</option>#}
                                 <option value="gpt-4-1106-preview">GPT-4 Turbo(128K)</option>
                                 {#                                <option value="gpt-4-32k-0613">GPT-4(32K)</option>#}
                                 {#										<option value="gpt-4-0314">GPT-4-0314</option>#}
@@ -140,15 +159,15 @@
                                 <option selected value="ft:gpt-3.5-turbo-0613:51talk-1:recipe-ner:8Flwel6y">
                                     GPT-3.5-ft-ai-teacher-aaron
                                 </option>
-{#                                <option selected value="ft:gpt-3.5-turbo-1106:51talk-1::8Zx863t8">#}
-{#                                    GPT-3.5-ft-ai-order-food#}
-{#                                </option>#}
-{#                                <option selected value="ft:gpt-3.5-turbo-1106:51talk-1::8OOcnOhm">#}
-{#                                    GPT-3.5-ft-syllabus#}
-{#                                </option>#}
-{#                                <option selected value="ft:gpt-3.5-turbo-1106:51talk-1::8QrMXYEh">#}
-{#                                    GPT-3.5-ft-cailin-30#}
-{#                                </option>#}
+                                {#                                <option selected value="ft:gpt-3.5-turbo-1106:51talk-1::8Zx863t8">#}
+                                {#                                    GPT-3.5-ft-ai-order-food#}
+                                {#                                </option>#}
+                                {#                                <option selected value="ft:gpt-3.5-turbo-1106:51talk-1::8OOcnOhm">#}
+                                {#                                    GPT-3.5-ft-syllabus#}
+                                {#                                </option>#}
+                                {#                                <option selected value="ft:gpt-3.5-turbo-1106:51talk-1::8QrMXYEh">#}
+                                {#                                    GPT-3.5-ft-cailin-30#}
+                                {#                                </option>#}
                                 <option selected value="ft:gpt-3.5-turbo-1106:51talk-1::8PioHSZf">
                                     GPT-3.5-ft-MathGPT
                                 </option>
@@ -209,6 +228,21 @@
 <!-- scripts -->
 <script>
     window.conversation_id = "{{ chat_id }}";
+    $(function () {
+        $('.easygpt_menu').popup();
+        $('.easygpt_menu_asr').click(function (){
+            window.open('/easygpt/asr/', '_blank');
+        });
+        $('.easygpt_menu_tts').click(function (){
+            window.open('/easygpt/tts/', '_blank');
+        });
+        $('.easygpt_menu_prompt').click(function (){
+            window.open('/easygpt/prompt/', '_blank');
+        });
+        $('.easygpt_menu_teacher').click(function (){
+            window.open('/easygpt/teacher/', '_blank');
+        });
+    });
 </script>
 <script src="{{ url_for('bp.static', filename='js/api-key.js') }}"></script>
 <script src="{{ url_for('bp.static', filename='js/upload.js') }}"></script>
