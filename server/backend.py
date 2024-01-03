@@ -136,9 +136,9 @@ class Backend_Api:
                 if not self.config["llama2"]["use"]:
                     return "LLama2 Not Supported, Needs to Setting Config config[llama2][use] true"
                 return LLama2Generator.generate_llama2_chat(self.model, self.tokenizer, messages)
-            elif model == "qianfan_llama2-7b-food-v1":
-                print("qianfan_llama2_food================")
-                return QianfanGenerator.generate_llama2_chat_food(messages, stream)
+            elif model.startswith("qianfan_"):
+                print(f"qianfan_{model}================")
+                return QianfanGenerator.request_qianfan(model, messages, stream)
             elif model == "gpt-assistant-ai-teacher":
                 print("assistant=================")
                 return AssistantGenerator.request_assitant(model, messages, session_id)

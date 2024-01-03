@@ -1,8 +1,7 @@
 import json
 import requests
 import logging
-import openai
-from flask import request, Response, stream_with_context, send_file, url_for
+from flask import request, Response, stream_with_context
 from typing import Generator, Union
 
 
@@ -26,6 +25,40 @@ class QianfanGenerator:
 
         response = requests.request("POST", url, headers=headers, data=payload)
         return response.json().get("access_token")
+
+    @staticmethod
+    def request_qianfan(model, messages, stream):
+        if model == "qianfan_ernie_bot_8k":
+            return QianfanGenerator.generate_ernie_bot_8k(messages, stream)
+        elif model == "qianfan_llama2-7b-food-v1":
+            return QianfanGenerator.generate_llama2_chat_food(messages, stream)
+
+    @staticmethod
+    def generate_ernie_bot_8k(messages, stream):
+
+        url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie_bot_8k?access_token=" + QianfanGenerator.get_access_token()
+        query_messages = {
+            "messages": messages
+        }
+        if stream:
+            query_messages["stream"] = True
+
+        payload = json.dumps(query_messages)
+
+        headers = {
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload, stream=stream)
+        print(response)
+
+        if stream:
+            print(type(response))
+            return QianfanGenerator.compact_response(response)
+
+        answer = response.json()['result']
+
+        return Response(answer)
 
     @staticmethod
     def generate_llama2_chat_food(messages, stream):
@@ -61,7 +94,8 @@ class QianfanGenerator:
         return Response(answer)
 
     @staticmethod
-    def compact_response(response: Union[dict, Generator]) -> Response:
+    def compact_response(response: Union[dict, requests.models.Response, Generator]) -> Response:
+        pass
         """
         return stream response
         """
@@ -72,23 +106,18 @@ class QianfanGenerator:
         # 如果响应是一个生成器，创建并返回一个流式响应
         def generate() -> Generator:
             try:
-                for chunk in response:
+                for chunk in response.iter_lines():
+                    chunk = chunk.decode("utf-8")
                     print(chunk)
-                    chunk_str = chunk.decode()
-                    print(chunk_str)
-                    yield chunk_str['result']
-                    # if chunk_str.startswith('data: '):
-                    #     chunk_str = chunk_str[6:]
-                    # chunk_dict = json.loads(chunk_str)
-                    # if chunk_dict['is_end'] != True:
-                    #     yield chunk_dict["result"]
-                    # 假设chunk是流式API返回的数据结构
-                    # 你可能需要根据实际的数据结构进行调整
-                    # if chunk.is_end != True:
-                    #     yield chunk.result
-            except Exception:
+                    if chunk.startswith('data:'):
+                        completion = json.loads(chunk[5:])
+                        if not completion['is_end']:
+                            # yield json.dumps(completion)
+                            yield completion['result']
+
+            except Exception as e:
                 # 在生产环境中，应使用日志记录此类错误
-                logging.exception("internal server error.")
+                logging.exception("Error while streaming response: %s", e)
 
         # 使用stream_with_context确保请求上下文在流生成期间保持激活
         return Response(stream_with_context(generate()), status=200, mimetype='text/event-stream')
