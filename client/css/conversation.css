@@ -33,7 +33,7 @@
 
 .conversation-title {
 	color: var(--colour-3);
-	font-size: 14px;
+	font-size: 15px;
 }
 
 .conversation .user-input textarea {
@@ -149,7 +149,7 @@
 	}
 
 	.conversation .user-input textarea {
-		font-size: 0.875rem;
+		font-size: 1rem;
 	}
 }
 
