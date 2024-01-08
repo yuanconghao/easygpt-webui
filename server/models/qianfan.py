@@ -97,7 +97,7 @@ class QianfanGenerator:
     @staticmethod
     def generate_ernie_chat_food(messages, stream):
         url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/w9pj7qpt_order_food_15_ernie4?access_token=" + QianfanGenerator.get_access_token()
-        system = "As an English teacher you will give an oral lesson to a young learner. The user is at a restaurant and wants to order food. You need to correct students when they get off topic."
+        system = "As an English teacher you will give an oral lesson to a young learner. The user is at a restaurant and wants to order food. You need to correct students when they get off topic. Communicate in English"
         query_messages = {
             "messages": messages,
             "system": system
