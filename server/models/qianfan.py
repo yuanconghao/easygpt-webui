@@ -42,33 +42,6 @@ class QianfanGenerator:
             return QianfanGenerator.generate_ernie_chat_food(messages, stream)
 
     @staticmethod
-    def generate_ernie_chat_food(messages, stream):
-        url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/w9pj7qpt_order_food_15_ernie4?access_token=" + QianfanGenerator.get_access_token()
-        query_messages = {
-            "messages": messages
-        }
-        if stream:
-            query_messages["stream"] = True
-
-        payload = json.dumps(query_messages)
-
-        headers = {
-            'Content-Type': 'application/json'
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload, stream=stream)
-        print("ernie============")
-        print(response)
-
-        if stream:
-            print(type(response))
-            return QianfanGenerator.compact_response(response)
-
-        answer = response.json()['result']
-
-        return Response(answer)
-
-    @staticmethod
     def generate_ernie_bot_4(messages, stream):
         url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions_pro?access_token=" + QianfanGenerator.get_access_token()
         query_messages = {
@@ -122,17 +95,47 @@ class QianfanGenerator:
         return Response(answer)
 
     @staticmethod
+    def generate_ernie_chat_food(messages, stream):
+        url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/w9pj7qpt_order_food_15_ernie4?access_token=" + QianfanGenerator.get_access_token()
+        system = "As an English teacher you will give an oral lesson to a young learner. The user is at a restaurant and wants to order food. You need to correct students when they get off topic."
+        query_messages = {
+            "messages": messages,
+            "system": system
+        }
+        if stream:
+            query_messages["stream"] = True
+
+        payload = json.dumps(query_messages)
+
+        headers = {
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload, stream=stream)
+        print("ernie============")
+        print(response)
+
+        if stream:
+            print(type(response))
+            return QianfanGenerator.compact_response(response)
+
+        answer = response.json()['result']
+
+        return Response(answer)
+
+    @staticmethod
     def generate_llama2_chat_food(messages, stream):
-        stream = False
         print("generate_llama2_chat_food==============")
         print(messages)
         """
         request gpt
         """
+        system = "As an English teacher you will give an oral lesson to a young learner. The user is at a restaurant and wants to order food. You need to correct students when they get off topic."
         url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/rlxj7x8a_llama2_food_v2?access_token=" + QianfanGenerator.get_access_token()
         print(url)
         query_messages = {
-            "messages": messages
+            "messages": messages,
+            "system": system
         }
         if stream:
             query_messages["stream"] = True
