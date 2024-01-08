@@ -29,11 +29,44 @@ class QianfanGenerator:
     @staticmethod
     def request_qianfan(model, messages, stream):
         if model == "qianfan_ernie_bot_8k":
+            print("request_qianfan_ernie_bot_8k")
             return QianfanGenerator.generate_ernie_bot_8k(messages, stream)
         elif model == "qianfan_ernie_bot_4":
+            print("request_qianfan_ernie_bot_4")
             return QianfanGenerator.generate_ernie_bot_4(messages, stream)
-        elif model == "qianfan_llama2-7b-food-v1":
+        elif model == "qianfan_llama2_7b_food":
+            print("request_qianfan_llama2_7b_food")
             return QianfanGenerator.generate_llama2_chat_food(messages, stream)
+        elif model == "qianfan_ernie_food":
+            print("request_qianfan_ernie_food")
+            return QianfanGenerator.generate_ernie_chat_food(messages, stream)
+
+    @staticmethod
+    def generate_ernie_chat_food(messages, stream):
+        url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/w9pj7qpt_order_food_15_ernie4?access_token=" + QianfanGenerator.get_access_token()
+        query_messages = {
+            "messages": messages
+        }
+        if stream:
+            query_messages["stream"] = True
+
+        payload = json.dumps(query_messages)
+
+        headers = {
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload, stream=stream)
+        print("ernie============")
+        print(response)
+
+        if stream:
+            print(type(response))
+            return QianfanGenerator.compact_response(response)
+
+        answer = response.json()['result']
+
+        return Response(answer)
 
     @staticmethod
     def generate_ernie_bot_4(messages, stream):
@@ -96,7 +129,7 @@ class QianfanGenerator:
         """
         request gpt
         """
-        url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/dat2p0c0_llama2_food_v1_loss2?access_token=" + QianfanGenerator.get_access_token()
+        url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/rlxj7x8a_llama2_food_v2?access_token=" + QianfanGenerator.get_access_token()
         print(url)
         query_messages = {
             "messages": messages
