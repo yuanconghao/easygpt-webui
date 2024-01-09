@@ -1,6 +1,6 @@
 .conversation {
 	width: 80%;
-	margin: 0px 16px;
+	margin: 0px 6px;
 	display: flex;
 	flex-direction: column;
 }
