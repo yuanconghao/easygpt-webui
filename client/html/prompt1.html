@@ -31,9 +31,7 @@
     <script src="{{ url_for('bp.static', filename='js/jquery.min.js') }}"></script>
     <script src="{{ url_for('bp.static', filename='js/lesson_menu.js') }}"></script>
     <script src="{{ url_for('bp.static', filename='semantic/semantic.min.js') }}"></script>
-    <link
-            rel="stylesheet"
-            href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/styles/base16/dracula.min.css"/>
+    <link rel="stylesheet" href="{{ url_for('bp.static', filename='css/dracula.min.css') }}"/>
     <title>EasyGPT--Prompt</title>
 </head>
 
@@ -233,6 +231,6 @@
     });
 </script>
 <script src="{{ url_for('bp.static', filename='js/icons.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/markdown-it@latest/dist/markdown-it.min.js"></script>
+<script src="{{ url_for('bp.static', filename='js/markdown-it.min.js') }}"></script>
 </body>
 </html>

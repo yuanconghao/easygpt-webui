@@ -32,10 +32,7 @@
     <script src="{{ url_for('bp.static', filename='semantic/semantic.min.js') }}"></script>
     {#    <script src="{{ url_for('bp.static', filename='js/auto-render.min.js') }}"></script>#}
     {#    <script src="{{ url_for('bp.static', filename='js/katex.min.js') }}"></script>#}
-    <link
-            rel="stylesheet"
-            href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/styles/base16/dracula.min.css"/>
-
+    <link rel="stylesheet" href="{{ url_for('bp.static', filename='css/dracula.min.css') }}"/>
     <style>
         a.img-link {
             color: red;
@@ -259,7 +256,7 @@
 <script src="{{ url_for('bp.static', filename='js/upload.js') }}"></script>
 <script src="{{ url_for('bp.static', filename='js/icons.js') }}"></script>
 <script src="{{ url_for('bp.static', filename='js/chat.js') }}" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/markdown-it@latest/dist/markdown-it.min.js"></script>
+<script src="{{ url_for('bp.static', filename='js/markdown-it.min.js') }}"></script>
 <script src="{{ url_for('bp.static', filename='js/highlight.min.js') }}"></script>
 <script src="{{ url_for('bp.static', filename='js/highlightjs-copy.min.js') }}"></script>
 <script src="{{ url_for('bp.static', filename='js/theme-toggler.js') }}"></script>
