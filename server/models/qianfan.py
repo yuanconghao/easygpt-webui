@@ -5,6 +5,14 @@ from flask import request, Response, stream_with_context
 from typing import Generator, Union
 
 
+qianfan_urls = {
+    "qianfan_llama2_13b_food": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/h5t0irbl_llama2_13_food_pull",
+    "qianfan_llama2_7b_food" : "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/rlxj7x8a_llama2_food_v2",
+    "qianfan_ernie_bot_4": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions_pro",
+    "qianfan_ernie_bot_8k": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie_bot_8k",
+}
+
+
 class QianfanGenerator:
 
     @staticmethod
@@ -30,16 +38,83 @@ class QianfanGenerator:
     def request_qianfan(model, messages, stream):
         if model == "qianfan_ernie_bot_8k":
             print("request_qianfan_ernie_bot_8k")
-            return QianfanGenerator.generate_ernie_bot_8k(messages, stream)
+            return QianfanGenerator.generate_ernie_bot(model, messages, stream)
+            # return QianfanGenerator.generate_ernie_bot_8k(messages, stream)
         elif model == "qianfan_ernie_bot_4":
             print("request_qianfan_ernie_bot_4")
-            return QianfanGenerator.generate_ernie_bot_4(messages, stream)
+            # return QianfanGenerator.generate_ernie_bot_4(messages, stream)
+            return QianfanGenerator.generate_ernie_bot(model, messages, stream)
         elif model == "qianfan_llama2_7b_food":
             print("request_qianfan_llama2_7b_food")
-            return QianfanGenerator.generate_llama2_chat_food(messages, stream)
+            return "暂停服务，联系yuanconghao开通"
+            # return QianfanGenerator.generate_llama2_chat(model, messages, stream)
+        elif model == "qianfan_llama2_13b_food":
+            print("request_qianfan_llama2_13b_food")
+            # return QianfanGenerator.generate_llama2_13_chat_food(messages, stream)
+            return QianfanGenerator.generate_llama2_chat(model, messages, stream)
         elif model == "qianfan_ernie_food":
             print("request_qianfan_ernie_food")
-            return QianfanGenerator.generate_ernie_chat_food(messages, stream)
+            return "暂停服务，联系yuanconghao开通"
+            # return QianfanGenerator.generate_ernie_bot(model, messages, stream)
+
+
+    @staticmethod
+    def generate_ernie_bot(model, messages, stream):
+        url = qianfan_urls[model]
+        url += "?access_token=" + QianfanGenerator.get_access_token()
+        query_messages = {
+            "messages": messages
+        }
+        if stream:
+            query_messages["stream"] = True
+
+        payload = json.dumps(query_messages)
+
+        headers = {
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload, stream=stream)
+        print(response)
+
+        if stream:
+            print(type(response))
+            return QianfanGenerator.compact_response(response)
+
+        answer = response.json()['result']
+
+        return Response(answer)
+
+
+    @staticmethod
+    def generate_llama2_chat(model, messages, stream):
+        url = qianfan_urls[model]
+        url += "?access_token=" + QianfanGenerator.get_access_token()
+        system = ""
+        query_messages = {
+            "messages": messages,
+            "system": system
+        }
+        if stream:
+            query_messages["stream"] = True
+
+        payload = json.dumps(query_messages)
+
+        headers = {
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        print(response)
+
+        if stream:
+            return QianfanGenerator.compact_response(response)
+
+        print(response.text)
+        answer = json.loads(response.text)['result']
+
+        return Response(answer)
+
 
     @staticmethod
     def generate_ernie_bot_4(messages, stream):
