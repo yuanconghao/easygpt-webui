@@ -4,10 +4,10 @@ import logging
 from flask import request, Response, stream_with_context
 from typing import Generator, Union
 
-
 qianfan_urls = {
-    "qianfan_llama2_13b_food": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/h5t0irbl_llama2_13_food_pull",
-    "qianfan_llama2_7b_food" : "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/rlxj7x8a_llama2_food_v2",
+    # "qianfan_llama2_13b_food": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/h5t0irbl_llama2_13_food_pull",
+    "qianfan_llama2_13b_food": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/fcr4tudc_llama2_13_food_v2",
+    "qianfan_llama2_7b_food": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/rlxj7x8a_llama2_food_v2",
     "qianfan_ernie_bot_4": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions_pro",
     "qianfan_ernie_bot_8k": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie_bot_8k",
 }
@@ -57,7 +57,6 @@ class QianfanGenerator:
             return "暂停服务，联系yuanconghao开通"
             # return QianfanGenerator.generate_ernie_bot(model, messages, stream)
 
-
     @staticmethod
     def generate_ernie_bot(model, messages, stream):
         url = qianfan_urls[model]
@@ -85,15 +84,16 @@ class QianfanGenerator:
 
         return Response(answer)
 
-
     @staticmethod
     def generate_llama2_chat(model, messages, stream):
         url = qianfan_urls[model]
         url += "?access_token=" + QianfanGenerator.get_access_token()
+        # system = "You will play my English teacher, Now simulate a scene of ordering food, you role is a waiter, my role is a customer who wants to order food."
         system = ""
         query_messages = {
             "messages": messages,
-            "system": system
+            "system": system,
+            "temperature": 0.5
         }
         if stream:
             query_messages["stream"] = True
@@ -114,7 +114,6 @@ class QianfanGenerator:
         answer = json.loads(response.text)['result']
 
         return Response(answer)
-
 
     @staticmethod
     def generate_ernie_bot_4(messages, stream):
