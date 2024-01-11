@@ -6,7 +6,7 @@ from typing import Generator, Union
 
 qianfan_urls = {
     # "qianfan_llama2_13b_food": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/h5t0irbl_llama2_13_food_pull",
-    "qianfan_llama2_13b_food": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/fcr4tudc_llama2_13_food_v2",
+    "qianfan_llama2_13b_food": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/qp7smcbs_order_food_v3",
     "qianfan_llama2_7b_food": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/rlxj7x8a_llama2_food_v2",
     "qianfan_ernie_bot_4": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions_pro",
     "qianfan_ernie_bot_8k": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie_bot_8k",
