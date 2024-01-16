@@ -1,229 +1,404 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0"/>
-    <meta name="description" content="A conversational AI system that listens, learns, and challenges"/>
-    <link rel="stylesheet" href="{{ url_for('bp.static', filename='css/style.css') }}"/>
-    <link rel="stylesheet" href="{{ url_for('bp.static', filename='semantic/semantic.min.css') }}"/>
-    <link
-            rel="apple-touch-icon"
-            sizes="180x180"
-            href="{{ url_for('bp.static', filename='img/apple-touch-icon.png') }}"/>
-    <link
-            rel="icon"
-            type="image/png"
-            sizes="32x32"
-            href="{{ url_for('bp.static', filename='img/favicon-32x32.png') }}"/>
-    <link
-            rel="icon"
-            type="image/png"
-            sizes="16x16"
-            href="{{ url_for('bp.static', filename='img/favicon-16x16.png') }}"/>
-    <link rel="manifest" href="{{ url_for('bp.static', filename='img/site.webmanifest') }}"/>
-    <script src="{{ url_for('bp.static', filename='js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('bp.static', filename='js/lesson_menu.js') }}"></script>
-    <script src="{{ url_for('bp.static', filename='semantic/semantic.min.js') }}"></script>
-    <link rel="stylesheet" href="{{ url_for('bp.static', filename='css/dracula.min.css') }}"/>
-    <title>EasyGPT--Prompt</title>
+    {% include "header1.html" %}
+    <title>EasyGPT--Corpus</title>
 </head>
 
 <body data-urlprefix="{{ url_prefix }}">
 <div class="main-container">
-    <div class="ui one column stackable grid">
-        <div class="column">
-            <div class="ui selection dropdown level">
-                <input name="level" type="hidden" value="">
-                <i class="dropdown icon"></i>
-                <div class="default text">Level1</div>
-                <div class="menu">
-                    <div class="item" data-value="Level0">Level0</div>
-                    <div class="item" data-value="Level1">Level1</div>
-                    <div class="item" data-value="Level2">Level2</div>
-                    <div class="item" data-value="Level3">Level3</div>
-                    <div class="item" data-value="Level4">Level4</div>
-                    <div class="item" data-value="Level5">Level5</div>
-                    <div class="item" data-value="Level6">Level6</div>
+    <div class="ui vertical icon menu" style="height:100%; margin-right: 5px;">
+        {% include "menu.html" %}
+    </div>
+    <div class="ui one column stackable grid" style="width: 100%;">
+        <div class="sixteen wide column" style="width:100%; margin-left: 20px;">
+            <div class="ui form">
+                <div class="ui horizontal divider">
+                    <font color="#778899">教材语料生成</font>
+                </div>
+                <div class="inline fields">
+                    <a class="ui teal image label">
+                        <img src="/easygpt/assets/img/avatar/christian.jpg">
+                        Teacher
+                        <div class="detail">Role Name</div>
+                    </a>
+                    <div class="field">
+                        <input type="text" size="20" placeholder="Max" name="role_name">
+                        <div class="ui left pointing label">
+                            You will play my English teacher <em style="color: #d01919;">Max</em>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="inline fields">
+                    <label>教学风格：<i class="help circle icon popup_converter"
+                                   data-content="Your teaching style is enthusiastic and encouraging, which can reflect your enthusiasm for teaching, stimulate students' interest in learning, provide positive feedback and help to students, and stimulate their learning motivation."
+                                   data-variation="wide"></i></label>
+                    <div class="field">
+                        <div class="ui checkbox">
+                            <input checked name="role_style" type="checkbox" value="enthusiastic">
+                            <label>热情的<i class="info circle icon popup_converter" data-content="教师对教学充满热情，能够激发学生的学习兴趣。"
+                                         data-variation="wide"></i></label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui checkbox">
+                            <input name="role_style" type="checkbox" value="strict">
+                            <label>严格的<i class="info circle icon popup_converter" data-content="教师对学生的学习要求严格，注重纪律和规则。"
+                                         data-variation="wide"></i></label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui checkbox">
+                            <input name="role_style" type="checkbox" value="heuristic">
+                            <label>启发式的<i class="info circle icon popup_converter"
+                                          data-content="教师通过提问、讨论等方式引导学生自我发现和自我学习。" data-variation="wide"></i></label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui checkbox">
+                            <input checked name="role_style" type="checkbox" value="encouraging">
+                            <label>鼓励式的<i class="info circle icon popup_converter"
+                                          data-content="教师对学生的学习给予积极的反馈和鼓励，激发他们的学习动力。"
+                                          data-variation="wide"></i></label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui checkbox">
+                            <input disabled name="role_style" type="checkbox" value="directive">
+                            <label>导向式的<i class="info circle icon popup_converter" data-content="教师主导课堂，提供明确的指导和指示。"
+                                          data-variation="wide"></i></label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui checkbox">
+                            <input disabled name="role_style" type="checkbox" value="interactive">
+                            <label>互动式的<i class="info circle icon popup_converter"
+                                          data-content="教师鼓励学生参与课堂讨论，强调师生之间的互动。" data-variation="wide"></i></label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui checkbox">
+                            <input disabled name="role_style" type="checkbox" value="discussion">
+                            <label>讨论式的<i class="info circle icon popup_converter"
+                                          data-content="教师鼓励学生在课堂上提出自己的观点，通过讨论深化理解。" data-variation="wide"></i></label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui checkbox">
+                            <input disabled name="role_style" type="checkbox" value="practical">
+                            <label>实践式的<i class="info circle icon popup_converter"
+                                          data-content="教师注重将理论知识与实际操作相结合，强调学生的实践技能。" data-variation="wide"></i></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="inline fields">
+                    <label>CEFR Level：<i class="help circle icon popup_converter"
+                                         data-content="The English level of the student is at CEFR A1. Please generate 2 talking rounds that the words counts within 20 in each sentence."
+                                         data-variation="wide"></i></label>
+                    <div class="field">
+                        <div class="ui radio checkbox">
+                            <input name="cefr_level" type="radio" value="pre-a1">
+                            <label>Pre-A1<i class="info circle icon popup_converter" data-content="6岁之前"
+                                            data-variation="wide"></i></label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui radio checkbox">
+                            <input checked name="cefr_level" type="radio" value="a1">
+                            <label>A1<i class="info circle icon popup_converter" data-content="6-8岁"
+                                        data-variation="wide"></i></label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui radio checkbox">
+                            <input name="cefr_level" type="radio" value="a2">
+                            <label>A2<i class="info circle icon popup_converter" data-content="8-10岁"
+                                        data-variation="wide"></i></label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui radio checkbox">
+                            <input name="cefr_level" type="radio" value="b1">
+                            <label>B1<i class="info circle icon popup_converter" data-content="10-12岁"
+                                        data-variation="wide"></i></label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui radio checkbox">
+                            <input disabled name="cefr_level" type="radio" value="b2">
+                            <label>B2<i class="info circle icon popup_converter" data-content="12-16岁"
+                                        data-variation="wide"></i></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui divider"></div>
+
+                <div class="inline fields">
+                    <label>教学环节：<i class="help circle icon popup_converter" data-content=""
+                                   data-variation="wide"></i></label>
+                    <div class="field">
+                        <div class="ui radio checkbox">
+                            <input checked name="teaching_steps" type="radio" value="vocab_learning">
+                            <label>词汇学习</label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui radio checkbox">
+                            <input name="teaching_steps" type="radio" value="sentence_learning">
+                            <label>句子学习</label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui radio checkbox">
+                            <input name="teaching_steps" type="radio" value="grammar_learning">
+                            <label>语法学习</label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui radio checkbox">
+                            <input name="teaching_steps" type="radio" value="dialogue_learning">
+                            <label>对话学习</label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui radio checkbox">
+                            <input disabled name="teaching_steps" type="radio" value="game_learning">
+                            <label>游戏学习</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui two column grid">
+                    <div class="column">
+                        <div class="inline fields">
+                            <label>学习Words：</label>
+                            <input type="text" placeholder="card|every|father|mother|sometimes|parent"
+                                   name="words">
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="inline fields">
+                            <label>学习Sentence：</label>
+                            <input type="text" placeholder="Sometimes I give him a card.|I just give him a hug"
+                                   name="sentence">
+                        </div>
+                    </div>
+                </div>
+
+                {#                <div class="inline fields">#}
+                {#                    <div class="ui labeled input">#}
+                {#                        <a class="ui label">#}
+                {#                            学习句法#}
+                {#                        </a>#}
+                {#                        <input type="text" size="100" placeholder="give ... a gift"#}
+                {#                               name="sentence">#}
+                {#                    </div>#}
+                {#                </div>#}
+                <div class="ui divider"></div>
+
+                <div class="ui three column grid">
+                    <div class="column">
+                        <div class="field">
+                            <label>教学目标</label>
+                            <textarea rows="5"
+                                      placeholder="The dialogue goal includes introducing the game to student. Ask the student move the magnifying glass to see the toys in the claw machine. Then tell you what kind of toys are in the machine."></textarea>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <label>教材背景描述</label>
+                            <textarea rows="5"
+                                      placeholder="there are a claw machine that takes up the entire screen. There’s a cat, a truck, a bird, a teddy bear, a pink doll and a green monster in the claw machine. The student just can see part of the background image with the magnifying glass tool, but not all. Student can move the magnifying glass tool to see the entire background image."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="field">
+                            <label>教材角色描述</label>
+                            <textarea rows="5"
+                                      placeholder="A boy name Timmy and a girl name Cindy are standing in the center of the toy store. Timmy is holding a green one-eyed plush monster puppet, and Cindy is holding a pink doll."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="field">
+                        <label>一轮对话示例</label>
+                        <textarea rows="4"
+                                  placeholder="Teacher:  Hello there, dear! Welcome to AI Class. My name is Max and I am your friendly English teacher. We're going to have a lot of fun learning together! Can you say, 'Hello, Max!'?
+Student:  Hello, Max.
+Teacher:  Very good! I'm really happy to hear you speaking English! Now, can you tell me, how are you today?
+Student:  I’m happy.
+Teacher:  Excellent! I'm glad to hear you're fine. Now let's start our English journey together, shall we?
+Student:  Okay!"></textarea>
+                    </div>
+                </div>
+
+                <div class="ui divider"></div>
+                <div class="ui grid">
+                    <div class="three wide column">
+                        <div class="inline fields">
+                            <label>生成数量</label>
+                            <div class="ui selection dropdown corpus_nums" style="min-width: 5em;">
+                                <input name="corpus_nums" type="hidden" value="">
+                                <i class="dropdown icon"></i>
+                                <div class="default text">1</div>
+                                <div class="menu">
+                                    <div class="item" data-value="1">1</div>
+                                    <div class="item" data-value="2">2</div>
+                                    <div class="item" data-value="3">3</div>
+                                    <div class="item" data-value="4">4</div>
+                                    <div class="item" data-value="5">5</div>
+                                    <div class="item" data-value="6">6</div>
+                                    <div class="item" data-value="7">7</div>
+                                    <div class="item" data-value="8">8</div>
+                                    <div class="item" data-value="9">9</div>
+                                    <div class="item" data-value="10">10</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="three wide column">
+                        <div class="inline fields">
+                            <label>生成格式</label>
+                            <div class="ui selection dropdown corpus_format" style="min-width: 8em;">
+                                <input name="corpus_format" type="hidden" value="">
+                                <i class="dropdown icon"></i>
+                                <div class="default text">Openai</div>
+                                <div class="menu">
+                                    <div class="item" data-value="openai">Openai</div>
+                                    <div class="item" data-value="qianfan">百度千帆</div>
+                                    <div class="item" data-value="llama2">LLama2</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="six wide column" style="display: flex; justify-content: center; align-items: center;">
+                        <div class="inline fields">
+                            <label>语料能力：</label>
+                            <div class="field">
+                                <div class="ui checkbox">
+                                    <input name="role_style" type="checkbox" value="strict">
+                                    <label>拉会</label>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="ui checkbox">
+                                    <input name="role_style" type="checkbox" value="strict">
+                                    <label>纠错</label>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="ui checkbox">
+                                    <input name="role_style" type="checkbox" value="strict">
+                                    <label>解释</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+
+                    </div>
+                    <div class="three wide right aligned column">
+                        <button class="ui primary button generate_corpus">
+                            语料生成
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="ui selection dropdown unit">
-                <input name="unit" type="hidden" value="">
-                <i class="dropdown icon"></i>
-                <div class="default text">Unit9</div>
-                <div class="menu">
-                    <div class="item" data-value="Unit1">Unit1</div>
-                    <div class="item" data-value="Unit2">Unit2</div>
-                    <div class="item" data-value="Unit3">Unit3</div>
-                    <div class="item" data-value="Unit4">Unit4</div>
-                    <div class="item" data-value="Unit5">Unit5</div>
-                    <div class="item" data-value="Unit6">Unit6</div>
-                    <div class="item" data-value="Unit7">Unit7</div>
-                    <div class="item" data-value="Unit8">Unit8</div>
-                    <div class="item" data-value="Unit9">Unit9</div>
-                    <div class="item" data-value="Unit10">Unit10</div>
-                    <div class="item" data-value="Unit11">Unit11</div>
-                    <div class="item" data-value="Unit12">Unit12</div>
-                    <div class="item" data-value="Unit13">Unit13</div>
-                    <div class="item" data-value="Unit14">Unit14</div>
-                    <div class="item" data-value="Unit15">Unit15</div>
-                    <div class="item" data-value="Unit16">Unit16</div>
-                    <div class="item" data-value="Unit17">Unit17</div>
-                    <div class="item" data-value="Unit18">Unit18</div>
-                </div>
-            </div>
-            <div class="ui selection dropdown lesson">
-                <input name="lesson" type="hidden" value="">
-                <i class="dropdown icon"></i>
-                <div class="default text">Lesson8</div>
-                <div class="menu">
-                    <div class="item" data-value="Lesson1">Lesson1</div>
-                    <div class="item" data-value="Lesson2">Lesson2</div>
-                    <div class="item" data-value="Lesson3">Lesson3</div>
-                    <div class="item" data-value="Lesson4">Lesson4</div>
-                    <div class="item" data-value="Lesson5">Lesson5</div>
-                    <div class="item" data-value="Lesson6">Lesson6</div>
-                    <div class="item" data-value="Lesson7">Lesson7</div>
-                    <div class="item" data-value="Lesson8">Lesson8</div>
-                </div>
-            </div>
-            <div class="ui divider"></div>
-            <div class="ui labeled input">
-                <a class="ui label">
-                    Topic
-                </a>
-                <input type="text" size="30" placeholder="Special Days" name="topic">
-            </div>
-            <div class="ui labeled input">
-                <a class="ui label">
-                    Title
-                </a>
-                <input type="text" size="30" placeholder="Gifts for Parents" name="title">
-            </div>
-            <div class="ui divider"></div>
-            <div class="ui labeled input">
-                <a class="ui label">
-                    Words
-                </a>
-                <input type="text" size="100" placeholder="card|every|father|mother|sometimes|parent" name="words">
-            </div>
-            <div class="ui divider"></div>
-            <div class="ui labeled input">
-                <a class="ui label">
-                    Sentence
-                </a>
-                <input type="text" size="100" placeholder="Sometimes I give him a card.|I just give him a hug"
-                       name="sentence">
-            </div>
-            <div class="ui divider"></div>
-            <div class="ui ignored warning message">
-                <p><b>Example:</b> Learning Level1-Unit9-Lesson8, learning about the topic of "Special Days", with the title "Gifts for Parents", with the keywords being "card|every|father|mother|sometimes|parent", and the key sentences are "Sometimes I give him a card.|I just give him a hug".</p>
-            </div>
-            <button class="ui primary button get_prompt">
-                Prompt生成
-            </button>
-            <div class="ui divider"></div>
-            <div class="ui ignored info message prompt">
-                <p></p>
-            </div>
-            <div class="ui ignored warning message prompt_raw">
-                <p></p>
-            </div>
-{#            <div class="ui ignored error message prompt_assistant">#}
-{#                <p></p>#}
-{#            </div>#}
         </div>
     </div>
-</div>
-<div class="menu-button">
-    <i class="fa-solid fa-bars"></i>
 </div>
 
 <!-- scripts -->
 <script>
-    $(document).ready(function () {
-        // Assuming linkageData.js has been loaded and linkageData is available
-        // For example, linkageData could look like this:
-        // var linkageData = { "Level1": { "Unit1": { "Lesson1": { "topic": "Nature", "title": "Forests", ... } } } };
+    $(function () {
 
-        function updateInputs(level, unit, lesson) {
-            var levelData = menuData[level] || {};
-            var unitData = levelData[unit] || {};
-            var lessonData = unitData[lesson] || {};
+        //popup
+        $('.popup_converter').popup();
 
-            $("input[name='topic']").val(lessonData.topic || '');
-            $("input[name='title']").val(lessonData.title || '');
-            $("input[name='words']").val(lessonData.words || '');
-            $("input[name='sentence']").val(lessonData.sentence || '');
-        }
-
-        // Dropdown change event handlers
-        $('.ui.dropdown.level').dropdown({
-            onChange: function (value) {
-                var unit = $('.ui.dropdown.unit').dropdown('get value');
-                var lesson = $('.ui.dropdown.lesson').dropdown('get value');
-                updateInputs(value, unit, lesson);
-            }
+        $('.easygpt_menu_home').click(function () {
+            window.open('/easygpt/', '_self');
+        });
+        $('.easygpt_menu_asr').click(function () {
+            window.open('/easygpt/asr/', '_blank');
+        });
+        $('.easygpt_menu_tts').click(function () {
+            window.open('/easygpt/tts/', '_blank');
+        });
+        $('.easygpt_menu_prompt').click(function () {
+            window.open('/easygpt/prompt/', '_blank');
+        });
+        $('.easygpt_menu_teacher').click(function () {
+            window.open('/easygpt/teacher/', '_blank');
+        });
+        $('.easygpt_menu_corpus').click(function () {
+            window.open('/easygpt/corpus/', '_blank');
         });
 
-        $('.ui.dropdown.unit').dropdown({
-            onChange: function (value) {
-                var level = $('.ui.dropdown.level').dropdown('get value');
-                var lesson = $('.ui.dropdown.lesson').dropdown('get value');
-                updateInputs(level, value, lesson);
-            }
+        $('.ui.dropdown.corpus_nums').dropdown();
+
+        $('.ui.dropdown.corpus_format').dropdown();
+
+        var CORPUS = {
+            generate: function () {
+                //mtsname_other
+                var datetime_start = $("input[name=datetime_start]").val();
+                console.log(datetime_start);
+                var datetime_end = $("input[name=datetime_end]").val();
+                console.log(datetime_start);
+                //msgtype
+                var order_source = [];
+                $('input[name="order_source"]:checked').each(function () {
+                    order_source.push($(this).val());
+                });
+                console.log(order_source);
+
+                $.post('/winma/order/dosearch', {
+                    datetime_start: datetime_start,
+                    datetime_end: datetime_end,
+                    order_source: order_source
+                }, function (data) {
+                    $(".mts_start_process").removeClass('loading');
+                    console.log(data);
+                    if (data.code == '100000') {
+                        if (data.data.errmsg == '100001') {
+                            alert('时间格式不正确');
+                            return;
+                        }
+                    }
+                    if (data.code == '100000') {
+                        $(".mts_table").html("");
+                        var html = "";
+                        $.each(data.data, function (index, el) {
+                            html += ICODE.formatInfo(index + 1, el);
+                        });
+                        $(".mts_table").append(html);
+                    }
+                });
+            },
+            formatInfo: function (index, data) {
+                var html = "<tr>";
+                html += '<td>' + index + '</td>';
+                html += '<td>' + data.date + '</td>';
+                html += '<td>' + data.source_id + '</td>';
+                html += '<td>' + data.source_name + '</td>';
+                html += '<td>' + data.total_num + '</td>';
+                html += "</tr>";
+                return html;
+            },
+        };
+
+        //查询
+        $(".generate_corpus").click(function () {
+            $(".generate_corpus").addClass('loading');
+            CORPUS.generate();
         });
 
-        $('.ui.dropdown.lesson').dropdown({
-            onChange: function (value) {
-                var level = $('.ui.dropdown.level').dropdown('get value');
-                var unit = $('.ui.dropdown.unit').dropdown('get value');
-                updateInputs(level, unit, value);
-            }
-        });
-
-        // Initialize with default values
-        updateInputs(
-            $('.ui.dropdown.level').dropdown('get value'),
-            $('.ui.dropdown.unit').dropdown('get value'),
-            $('.ui.dropdown.lesson').dropdown('get value')
-        );
-
-        $(".get_prompt").click(function () {
-
-            var level = $("input[name=level]").val();
-            var unit = $("input[name=unit]").val();
-            var lesson = $("input[name=lesson]").val();
-            var topic = $("input[name=topic]").val();
-            var title = $("input[name=title]").val();
-            if (level === "" || unit === "" || lesson === "" || topic === "" || title === "") {
-                alert("level、unit、lesson、topic、title不能为空");
-                return;
-            }
-            level_unit_lesson = level + "-" + unit + "-" + lesson
-            prompt_text = "Learning " + level_unit_lesson + ", learning about the topic of \"" + topic + "\", with the title \"" + title + "\"";
-            prompt_raw_text = "You will play my English teacher Max, I am a 5-8-year-old Chinese student who has just started learning English. Your teaching style is warm and encouraging, embodying a positive and engaging approach. You will initiate communication by asking questions. Your responses should be as concise as possible, not exceeding 20 words at a time and avoiding complex clauses. Your role is not limited to asking questions; you should also guide the conversation, identify my responses, ask follow-up questions, emphasize my areas for improvement, and encourage deeper thinking. Please instruct me on the topic of ";
-            prompt_raw_text += topic;
-            var words = $("input[name=words]").val();
-            if (words !== "") {
-                prompt_text += ", with the keywords being \"" + words + "\""
-                prompt_raw_text += ", with the keywords being \"" + words + "\"";
-            }
-            var sentence = $("input[name=sentence]").val();
-            if (sentence !== "") {
-                prompt_text += ", and the key sentences are \"" + sentence + "\"."
-                prompt_raw_text += ", and the key sentences are \"" + sentence + "\"."
-            }else{
-                prompt_text += ".";
-                prompt_raw_text += ".";
-            }
-
-            $(".prompt p").html(prompt_text);
-            $(".prompt_raw p").html(prompt_raw_text);
-        });
     });
 </script>
-<script src="{{ url_for('bp.static', filename='js/icons.js') }}"></script>
-<script src="{{ url_for('bp.static', filename='js/markdown-it.min.js') }}"></script>
 </body>
 </html>

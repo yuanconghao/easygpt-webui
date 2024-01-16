@@ -43,6 +43,10 @@ class Website:
                 'function': self._corpus,
                 'methods': ['GET', 'POST']
             },
+            '/convert/': {
+                'function': self._convert,
+                'methods': ['GET', 'POST']
+            },
             '/change-language': {
                 'function': self.change_language,
                 'methods': ['POST']
@@ -92,6 +96,10 @@ class Website:
     def _corpus(self):
         print("corpus=========")
         return render_template('corpus.html', url_prefix=self.url_prefix)
+
+    def _convert(self):
+        print("convert=========")
+        return render_template('convert.html', url_prefix=self.url_prefix)
 
     def change_language(self):
         data = request.get_json()
