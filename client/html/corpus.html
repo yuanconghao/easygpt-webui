@@ -320,75 +320,13 @@ Student:  Okay!"></textarea>
         //popup
         $('.popup_converter').popup();
 
-        $('.easygpt_menu_home').click(function () {
-            window.open('/easygpt/', '_self');
-        });
-        $('.easygpt_menu_asr').click(function () {
-            window.open('/easygpt/asr/', '_blank');
-        });
-        $('.easygpt_menu_tts').click(function () {
-            window.open('/easygpt/tts/', '_blank');
-        });
-        $('.easygpt_menu_prompt').click(function () {
-            window.open('/easygpt/prompt/', '_blank');
-        });
-        $('.easygpt_menu_teacher').click(function () {
-            window.open('/easygpt/teacher/', '_blank');
-        });
-        $('.easygpt_menu_corpus').click(function () {
-            window.open('/easygpt/corpus/', '_blank');
-        });
-
         $('.ui.dropdown.corpus_nums').dropdown();
 
         $('.ui.dropdown.corpus_format').dropdown();
 
         var CORPUS = {
             generate: function () {
-                //mtsname_other
-                var datetime_start = $("input[name=datetime_start]").val();
-                console.log(datetime_start);
-                var datetime_end = $("input[name=datetime_end]").val();
-                console.log(datetime_start);
-                //msgtype
-                var order_source = [];
-                $('input[name="order_source"]:checked').each(function () {
-                    order_source.push($(this).val());
-                });
-                console.log(order_source);
-
-                $.post('/winma/order/dosearch', {
-                    datetime_start: datetime_start,
-                    datetime_end: datetime_end,
-                    order_source: order_source
-                }, function (data) {
-                    $(".mts_start_process").removeClass('loading');
-                    console.log(data);
-                    if (data.code == '100000') {
-                        if (data.data.errmsg == '100001') {
-                            alert('时间格式不正确');
-                            return;
-                        }
-                    }
-                    if (data.code == '100000') {
-                        $(".mts_table").html("");
-                        var html = "";
-                        $.each(data.data, function (index, el) {
-                            html += ICODE.formatInfo(index + 1, el);
-                        });
-                        $(".mts_table").append(html);
-                    }
-                });
-            },
-            formatInfo: function (index, data) {
-                var html = "<tr>";
-                html += '<td>' + index + '</td>';
-                html += '<td>' + data.date + '</td>';
-                html += '<td>' + data.source_id + '</td>';
-                html += '<td>' + data.source_name + '</td>';
-                html += '<td>' + data.total_num + '</td>';
-                html += "</tr>";
-                return html;
+                alert("开发中");
             },
         };
 

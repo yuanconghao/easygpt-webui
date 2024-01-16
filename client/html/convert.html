@@ -1,44 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0"/>
-    <meta name="description" content="A conversational AI system that listens, learns, and challenges"/>
-    <link rel="stylesheet" href="{{ url_for('bp.static', filename='semantic/semantic.min.css') }}"/>
-    <link
-            rel="apple-touch-icon"
-            sizes="180x180"
-            href="{{ url_for('bp.static', filename='img/apple-touch-icon.png') }}"/>
-    <link
-            rel="icon"
-            type="image/png"
-            sizes="32x32"
-            href="{{ url_for('bp.static', filename='img/favicon-32x32.png') }}"/>
-    <link
-            rel="icon"
-            type="image/png"
-            sizes="16x16"
-            href="{{ url_for('bp.static', filename='img/favicon-16x16.png') }}"/>
-    <link rel="manifest" href="{{ url_for('bp.static', filename='img/site.webmanifest') }}"/>
-    <script src="{{ url_for('bp.static', filename='js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('bp.static', filename='semantic/semantic.min.js') }}"></script>
-    <style>
-        .main-container {
-            display: flex;
-            padding: 24px;
-            height: 100vh;
-            justify-content: center;
-            box-sizing: border-box;
-        }
-
-        @media screen and (max-width: 360px) {
-            .main-container {
-                padding: 0px;
-                height: 90vh;
-            }
-        }
-    </style>
+    {% include "header1.html" %}
     <title>EasyGPT--Convert</title>
 </head>
 
@@ -65,7 +28,7 @@
                 </div>
                 <div class="inline fields">
                     <label>转换格式：<i class="help circle icon popup_converter" data-content="将jsonl语料转换为对应模型的微调格式"
-                                  data-variation="wide"></i></label>
+                                   data-variation="wide"></i></label>
                     <div class="field">
                         <div class="ui radio checkbox">
                             <input name="datatype" type="radio" value="openai">
@@ -85,11 +48,11 @@
                         </div>
                     </div>
                 </div>
+                <button class="ui primary button convert_corpus">
+                    语料转换
+                </button>
             </div>
 
-            <div class="ui negative message hidden"><i class="close icon"></i>
-                <p class="mts_err">请求已过期 </p>
-            </div>
         </div>
     </div>
 </div>
@@ -101,59 +64,16 @@
         //popup
         $('.popup_converter').popup();
 
-        var ICODE = {
-            search: function () {
-                //mtsname_other
-                var datetime_start = $("input[name=datetime_start]").val();
-                console.log(datetime_start);
-                var datetime_end = $("input[name=datetime_end]").val();
-                console.log(datetime_start);
-                //msgtype
-                var order_source = [];
-                $('input[name="order_source"]:checked').each(function () {
-                    order_source.push($(this).val());
-                });
-                console.log(order_source);
-
-                $.post('/winma/order/dosearch', {
-                    datetime_start: datetime_start,
-                    datetime_end: datetime_end,
-                    order_source: order_source
-                }, function (data) {
-                    $(".mts_start_process").removeClass('loading');
-                    console.log(data);
-                    if (data.code == '100000') {
-                        if (data.data.errmsg == '100001') {
-                            alert('时间格式不正确');
-                            return;
-                        }
-                    }
-                    if (data.code == '100000') {
-                        $(".mts_table").html("");
-                        var html = "";
-                        $.each(data.data, function (index, el) {
-                            html += ICODE.formatInfo(index + 1, el);
-                        });
-                        $(".mts_table").append(html);
-                    }
-                });
-            },
-            formatInfo: function (index, data) {
-                var html = "<tr>";
-                html += '<td>' + index + '</td>';
-                html += '<td>' + data.date + '</td>';
-                html += '<td>' + data.source_id + '</td>';
-                html += '<td>' + data.source_name + '</td>';
-                html += '<td>' + data.total_num + '</td>';
-                html += "</tr>";
-                return html;
+        var CORPUS = {
+            convert: function () {
+                alert("开发中");
             },
         };
 
         //查询
-        $(".mts_start_process").click(function () {
-            $(".mts_start_process").addClass('loading');
-            ICODE.search();
+        $(".convert_corpus").click(function () {
+            $(".convert_corpus").addClass('loading');
+            CORPUS.convert();
         });
 
     });

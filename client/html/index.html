@@ -23,6 +23,7 @@
             href="{{ url_for('bp.static', filename='img/favicon-16x16.png') }}"/>
     <link rel="manifest" href="{{ url_for('bp.static', filename='img/site.webmanifest') }}"/>
     <script src="{{ url_for('bp.static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('bp.static', filename='js/menu.js') }}"></script>
     <script src="{{ url_for('bp.static', filename='semantic/semantic.min.js') }}"></script>
     {#    <script src="{{ url_for('bp.static', filename='js/auto-render.min.js') }}"></script>#}
     {#    <script src="{{ url_for('bp.static', filename='js/katex.min.js') }}"></script>#}
@@ -38,24 +39,7 @@
 <body data-urlprefix="{{ url_prefix }}">
 <div class="main-container">
     <div class="ui vertical icon menu" style="height:100%; margin-right: 5px;">
-        <a class="item active">
-            <i class="home icon easygpt_menu_home" data-content="主页" data-variation="wide"></i>
-        </a>
-        <a class="item">
-            <i class="microphone icon easygpt_menu easygpt_menu_asr" data-content="ASR[语音转文字]" data-variation="wide"></i>
-        </a>
-        <a class="item">
-            <i class="volume up icon easygpt_menu easygpt_menu_tts" data-content="TTS[文字转语音]" data-variation="wide"></i>
-        </a>
-        <a class="item">
-            <i class="bell icon easygpt_menu easygpt_menu_prompt" data-content="Lesson Prompt" data-variation="wide"></i>
-        </a>
-        <a class="item">
-            <i class="user secret icon easygpt_menu easygpt_menu_teacher" data-content="AI情景对话" data-variation="wide"></i>
-        </a>
-{#        <a class="item">#}
-{#            <i class="user file word icon easygpt_menu easygpt_menu_corpus" data-content="语料生成" data-variation="wide"></i>#}
-{#        </a>#}
+        {% include "menu.html" %}
     </div>
     <div class="box sidebar">
         <div class="top">
@@ -224,27 +208,6 @@
 <!-- scripts -->
 <script>
     window.conversation_id = "{{ chat_id }}";
-    $(function () {
-        $('.easygpt_menu').popup();
-        $('.easygpt_menu_home').click(function (){
-            window.open('/easygpt/', '_self');
-        });
-        $('.easygpt_menu_asr').click(function (){
-            window.open('/easygpt/asr/', '_blank');
-        });
-        $('.easygpt_menu_tts').click(function (){
-            window.open('/easygpt/tts/', '_blank');
-        });
-        $('.easygpt_menu_prompt').click(function (){
-            window.open('/easygpt/prompt/', '_blank');
-        });
-        $('.easygpt_menu_teacher').click(function (){
-            window.open('/easygpt/teacher/', '_blank');
-        });
-        $('.easygpt_menu_corpus').click(function (){
-            window.open('/easygpt/corpus/', '_blank');
-        });
-    });
 </script>
 <script src="{{ url_for('bp.static', filename='js/api-key.js') }}"></script>
 <script src="{{ url_for('bp.static', filename='js/upload.js') }}"></script>
