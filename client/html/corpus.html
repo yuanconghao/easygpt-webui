@@ -27,6 +27,7 @@
                         <div class="ui left pointing label">
                             You will play my English teacher <em style="color: #d01919;">Max</em>
                         </div>
+                        <i class="info circle icon popup_converter" data-content="默认：Max" data-variation="wide"></i>
                     </div>
                 </div>
 
@@ -141,31 +142,31 @@
                                    data-variation="wide"></i></label>
                     <div class="field">
                         <div class="ui radio checkbox">
-                            <input checked name="teaching_steps" type="radio" value="vocab_learning">
+                            <input name="teaching_steps" type="radio" value="step_vocab">
                             <label>词汇学习</label>
                         </div>
                     </div>
                     <div class="field">
                         <div class="ui radio checkbox">
-                            <input name="teaching_steps" type="radio" value="sentence_learning">
+                            <input name="teaching_steps" type="radio" value="step_sentence">
                             <label>句子学习</label>
                         </div>
                     </div>
                     <div class="field">
                         <div class="ui radio checkbox">
-                            <input name="teaching_steps" type="radio" value="grammar_learning">
+                            <input name="teaching_steps" type="radio" value="step_grammar">
                             <label>语法学习</label>
                         </div>
                     </div>
                     <div class="field">
                         <div class="ui radio checkbox">
-                            <input name="teaching_steps" type="radio" value="dialogue_learning">
+                            <input name="teaching_steps" type="radio" value="step_dialogue">
                             <label>对话学习</label>
                         </div>
                     </div>
                     <div class="field">
                         <div class="ui radio checkbox">
-                            <input disabled name="teaching_steps" type="radio" value="game_learning">
+                            <input disabled name="teaching_steps" type="radio" value="step_game">
                             <label>游戏学习</label>
                         </div>
                     </div>
@@ -203,14 +204,14 @@
                     <div class="column">
                         <div class="field">
                             <label>教学目标</label>
-                            <textarea rows="5"
+                            <textarea name="teaching_goal" rows="5"
                                       placeholder="The dialogue goal includes introducing the game to student. Ask the student move the magnifying glass to see the toys in the claw machine. Then tell you what kind of toys are in the machine."></textarea>
                         </div>
                     </div>
                     <div class="column">
                         <div class="field">
                             <label>教材背景描述</label>
-                            <textarea rows="5"
+                            <textarea name="teaching_background" rows="5"
                                       placeholder="there are a claw machine that takes up the entire screen. There’s a cat, a truck, a bird, a teddy bear, a pink doll and a green monster in the claw machine. The student just can see part of the background image with the magnifying glass tool, but not all. Student can move the magnifying glass tool to see the entire background image."></textarea>
                         </div>
                     </div>
@@ -218,7 +219,7 @@
                     <div class="column">
                         <div class="field">
                             <label>教材角色描述</label>
-                            <textarea rows="5"
+                            <textarea name="teaching_characters" rows="5"
                                       placeholder="A boy name Timmy and a girl name Cindy are standing in the center of the toy store. Timmy is holding a green one-eyed plush monster puppet, and Cindy is holding a pink doll."></textarea>
                         </div>
                     </div>
@@ -227,7 +228,7 @@
                 <div class="column">
                     <div class="field">
                         <label>一轮对话示例</label>
-                        <textarea rows="4"
+                        <textarea name="teaching_example" rows="4"
                                   placeholder="Teacher:  Hello there, dear! Welcome to AI Class. My name is Max and I am your friendly English teacher. We're going to have a lot of fun learning together! Can you say, 'Hello, Max!'?
 Student:  Hello, Max.
 Teacher:  Very good! I'm really happy to hear you speaking English! Now, can you tell me, how are you today?
@@ -243,7 +244,7 @@ Student:  Okay!"></textarea>
                         <div class="inline fields">
                             <label>生成数量</label>
                             <div class="ui selection dropdown corpus_nums" style="min-width: 5em;">
-                                <input name="corpus_nums" type="hidden" value="">
+                                <input name="corpus_nums" type="hidden" value="1">
                                 <i class="dropdown icon"></i>
                                 <div class="default text">1</div>
                                 <div class="menu">
@@ -265,7 +266,7 @@ Student:  Okay!"></textarea>
                         <div class="inline fields">
                             <label>生成格式</label>
                             <div class="ui selection dropdown corpus_format" style="min-width: 8em;">
-                                <input name="corpus_format" type="hidden" value="">
+                                <input name="corpus_format" type="hidden" value="openai">
                                 <i class="dropdown icon"></i>
                                 <div class="default text">Openai</div>
                                 <div class="menu">
@@ -276,31 +277,33 @@ Student:  Okay!"></textarea>
                             </div>
                         </div>
                     </div>
-                    <div class="six wide column" style="display: flex; justify-content: center; align-items: center;">
+                    <div class="five wide column" style="display: flex; justify-content: center; align-items: center;">
                         <div class="inline fields">
                             <label>语料能力：</label>
                             <div class="field">
                                 <div class="ui checkbox">
-                                    <input name="role_style" type="checkbox" value="strict">
+                                    <input name="corpus_func" type="checkbox" value="pull">
                                     <label>拉会</label>
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="ui checkbox">
-                                    <input name="role_style" type="checkbox" value="strict">
+                                    <input name="corpus_func" type="checkbox" value="correction">
                                     <label>纠错</label>
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="ui checkbox">
-                                    <input name="role_style" type="checkbox" value="strict">
+                                    <input name="corpus_func" type="checkbox" value="explain">
                                     <label>解释</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="column">
-
+                    <div class="two wide column" style="display: flex; justify-content: left; align-items: center;">
+                        <div class="inline fields">
+                            <a class="corpus_download" href="#" download></a>
+                        </div>
                     </div>
                     <div class="three wide right aligned column">
                         <button class="ui primary button generate_corpus">
@@ -315,6 +318,7 @@ Student:  Okay!"></textarea>
 
 <!-- scripts -->
 <script>
+    const url_prefix = document.querySelector("body").getAttribute("data-urlprefix");
     $(function () {
 
         //popup
@@ -326,7 +330,103 @@ Student:  Okay!"></textarea>
 
         var CORPUS = {
             generate: function () {
-                alert("开发中");
+                var role_name = $("input[name=role_name]").val();
+                if (role_name == "") {
+                    role_name = "Max"
+                }
+                console.log(role_name)
+                var role_style = [];
+                $('input[name="role_style"]:checked').each(function () {
+                    role_style.push($(this).val());
+                });
+                console.log(role_style)
+                var cefr_level = $('input[name="cefr_level"]:checked').val();
+                console.log(cefr_level)
+                var teaching_steps = $('input[name="teaching_steps"]:checked').val();
+                console.log(teaching_steps)
+                if (teaching_steps == null) {
+                    alert("教学环节不能为空！");
+                    return;
+                }
+                var words = $("input[name=words]").val();
+                console.log(words)
+                if (teaching_steps == "step_vocab" && words == "") {
+                    alert("教学环节：词汇学习，学习Words不能为空！");
+                    return;
+                }
+                var sentence = $("input[name=sentence]").val();
+                console.log(sentence)
+                if (teaching_steps == "step_sentence" && sentence == "") {
+                    alert("教学环节：句子学习，学习Sentence不能为空！");
+                    return;
+                }
+                var teaching_goal = $("textarea[name=teaching_goal]").val();
+                console.log(teaching_goal)
+                var teaching_background = $("textarea[name=teaching_background]").val();
+                console.log(teaching_background)
+                var teaching_characters = $("textarea[name=teaching_characters]").val();
+                console.log(teaching_characters)
+                var teaching_example = $("textarea[name=teaching_example]").val();
+                console.log(teaching_example)
+                var corpus_nums = $("input[name=corpus_nums]").val();
+                console.log(corpus_nums)
+                var corpus_format = $("input[name=corpus_format]").val();
+                console.log(corpus_format)
+                var corpus_func = [];
+                $('input[name="corpus_func"]:checked').each(function () {
+                    corpus_func.push($(this).val());
+                });
+                console.log(corpus_func)
+                var startTime = new Date();
+
+                params = {
+                    role_name: role_name,
+                    role_style: role_style,
+                    cefr_level: cefr_level,
+                    teaching_steps: teaching_steps,
+                    words: words,
+                    sentence: sentence,
+                    teaching_goal: teaching_goal,
+                    teaching_background: teaching_background,
+                    teaching_characters: teaching_characters,
+                    teaching_example: teaching_example,
+                    corpus_nums: corpus_nums,
+                    corpus_format: corpus_format,
+                    corpus_func: corpus_func
+                }
+
+                $.ajax({
+                    url: `${url_prefix}/backend-api/v2/generate_corpus`,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(params),
+                    processData: false,
+                    xhrFields: {
+                        {#responseType: 'blob'#}
+                    },
+                    success: function (data) {
+                        var endTime = new Date();
+                        var timeDiff = endTime - startTime; // in ms
+                        timeDiff /= 1000;
+                        var seconds = Math.round(timeDiff);
+                        console.log("jjjjjjjjjjjjjjjjjjjjj");
+                        console.log(data)
+                        console.log("time cost:" + seconds);
+                        {#var new_url = URL.createObjectURL(data);#}
+                        {#console.log(new_url);#}
+                        new_url = "#"
+                        $('.corpus_download').attr('href', new_url);
+                        $('.corpus_download').append(new_url);
+                        alert("生成完成，请下载");
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("AJAX request failed: ", textStatus, errorThrown);
+                        info = "request failed";
+                        alert(info);
+                    }
+                });
+
+
             },
         };
 
@@ -334,6 +434,7 @@ Student:  Okay!"></textarea>
         $(".generate_corpus").click(function () {
             $(".generate_corpus").addClass('loading');
             CORPUS.generate();
+            $(".generate_corpus").removeClass('loading');
         });
 
     });

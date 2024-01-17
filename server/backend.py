@@ -12,6 +12,7 @@ from server.models.gpt import GPTGenerator
 from server.models.llama2 import LLama2Generator
 from server.models.assistant import AssistantGenerator
 from server.models.qianfan import QianfanGenerator
+from server.models.corpus import CorpusGenerator
 
 openai.api_key = os.environ.get("OPENAI_API_KEY_EASY")
 print(openai.api_key)
@@ -38,6 +39,10 @@ class Backend_Api:
             },
             '/backend-api/v2/generate_asr': {
                 'function': self._generate_asr,
+                'methods': ['POST', 'GET']
+            },
+            '/backend-api/v2/generate_corpus': {
+                'function': self._generate_corpus,
                 'methods': ['POST', 'GET']
             },
             '/backend-api/v2/uploads': {
@@ -84,6 +89,59 @@ class Backend_Api:
             text = request.json['text']
             voice = request.json['voice']
             return TTSGenerator.generate_tts(text, voice)
+        except Exception as e:
+            print(e)
+            print(e.__traceback__.tb_next)
+            msg = {
+                '_action': '_ask',
+                'success': False,
+                "error": f"an error occurred {str(e)}"
+            }
+            return msg, 500002
+
+    def _generate_corpus(self):
+        """
+        generate corpus
+        """
+        try:
+            print("corpus===================")
+            print(request.json)
+            role_name = request.json['role_name']
+            role_style = request.json['role_style']
+            cefr_level = request.json['cefr_level']
+            teaching_steps = request.json['teaching_steps']
+            words = request.json['words']
+            sentence = request.json['sentence']
+            teaching_goal = request.json['teaching_goal']
+            teaching_background = request.json['teaching_background']
+            teaching_characters = request.json['teaching_characters']
+            teaching_example = request.json['teaching_example']
+            corpus_nums = request.json['corpus_nums']
+            corpus_format = request.json['corpus_format']
+            corpus_func = request.json['corpus_func']
+            basic_info = {
+                "role_name" : role_name,
+                "role_style": role_style,
+                "cefr_level": cefr_level,
+            }
+            teaching_knowledge = {
+                "teaching_steps": teaching_steps,
+                "words": words,
+                "sentence": sentence,
+            }
+            teaching_method = {
+                "teaching_goal": teaching_goal,
+                "teaching_background": teaching_background,
+                "teaching_characters": teaching_characters,
+                "teaching_example": teaching_example,
+            }
+            corpus_info = {
+                "corpus_nums": corpus_nums,
+                "corpus_format": corpus_format,
+                "corpus_func": corpus_func,
+            }
+
+            return CorpusGenerator.generate_corpus(basic_info, teaching_knowledge, teaching_method, corpus_info)
         except Exception as e:
             print(e)
             print(e.__traceback__.tb_next)
