@@ -33,7 +33,7 @@
 
 .conversation-title {
 	color: var(--colour-3);
-	font-size: 15px;
+	font-size: 13px;
 }
 
 .conversation .user-input textarea {
