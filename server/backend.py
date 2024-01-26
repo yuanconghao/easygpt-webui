@@ -119,8 +119,9 @@ class Backend_Api:
             corpus_nums = request.json['corpus_nums']
             corpus_format = request.json['corpus_format']
             corpus_func = request.json['corpus_func']
+
             basic_info = {
-                "role_name" : role_name,
+                "role_name": role_name,
                 "role_style": role_style,
                 "cefr_level": cefr_level,
             }
