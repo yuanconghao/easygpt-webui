@@ -63,10 +63,17 @@ class Website:
                 'function': self._uploaded_file,
                 'methods': ['GET']
             },
+            '/outputs/<path:filename>': {
+                'function': self._outputs_file,
+                'methods': ['GET']
+            },
         }
 
     def _uploaded_file(self, filename):
         return send_from_directory(self.app.static_folder, filename)
+
+    def _outputs_file(self, filename):
+        return send_from_directory("outputs", filename)
 
     def _chat(self, conversation_id):
         if '-' not in conversation_id:
@@ -75,7 +82,9 @@ class Website:
         return render_template('index.html', chat_id=conversation_id, url_prefix=self.url_prefix)
 
     def _index(self):
-        return render_template('index.html', chat_id=f'{urandom(4).hex()}-{urandom(2).hex()}-{urandom(2).hex()}-{urandom(2).hex()}-{hex(int(time() * 1000))[2:]}', url_prefix=self.url_prefix)
+        return render_template('index.html',
+                               chat_id=f'{urandom(4).hex()}-{urandom(2).hex()}-{urandom(2).hex()}-{urandom(2).hex()}-{hex(int(time() * 1000))[2:]}',
+                               url_prefix=self.url_prefix)
 
     def _prompt(self):
         print("prompt=========")
@@ -109,7 +118,6 @@ class Website:
 
     def get_locale(self):
         return get_locale()
-    
-    def get_languages(self):  
-        return get_languages()
 
+    def get_languages(self):
+        return get_languages()

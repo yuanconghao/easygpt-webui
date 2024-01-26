@@ -100,35 +100,35 @@
                                          data-variation="wide"></i></label>
                     <div class="field">
                         <div class="ui radio checkbox">
-                            <input name="cefr_level" type="radio" value="pre-a1">
+                            <input name="cefr_level" type="radio" value="pre-A1">
                             <label>Pre-A1<i class="info circle icon popup_converter" data-content="6岁之前"
                                             data-variation="wide"></i></label>
                         </div>
                     </div>
                     <div class="field">
                         <div class="ui radio checkbox">
-                            <input checked name="cefr_level" type="radio" value="a1">
+                            <input checked name="cefr_level" type="radio" value="A1">
                             <label>A1<i class="info circle icon popup_converter" data-content="6-8岁"
                                         data-variation="wide"></i></label>
                         </div>
                     </div>
                     <div class="field">
                         <div class="ui radio checkbox">
-                            <input name="cefr_level" type="radio" value="a2">
+                            <input name="cefr_level" type="radio" value="A2">
                             <label>A2<i class="info circle icon popup_converter" data-content="8-10岁"
                                         data-variation="wide"></i></label>
                         </div>
                     </div>
                     <div class="field">
                         <div class="ui radio checkbox">
-                            <input name="cefr_level" type="radio" value="b1">
+                            <input name="cefr_level" type="radio" value="B1">
                             <label>B1<i class="info circle icon popup_converter" data-content="10-12岁"
                                         data-variation="wide"></i></label>
                         </div>
                     </div>
                     <div class="field">
                         <div class="ui radio checkbox">
-                            <input disabled name="cefr_level" type="radio" value="b2">
+                            <input disabled name="cefr_level" type="radio" value="B2">
                             <label>B2<i class="info circle icon popup_converter" data-content="12-16岁"
                                         data-variation="wide"></i></label>
                         </div>
@@ -240,7 +240,7 @@ Student:  Okay!"></textarea>
 
                 <div class="ui divider"></div>
                 <div class="ui grid">
-                    <div class="three wide column">
+                    <div class="two wide column">
                         <div class="inline fields">
                             <label>生成数量</label>
                             <div class="ui selection dropdown corpus_nums" style="min-width: 5em;">
@@ -277,7 +277,7 @@ Student:  Okay!"></textarea>
                             </div>
                         </div>
                     </div>
-                    <div class="five wide column" style="display: flex; justify-content: center; align-items: center;">
+                    <div class="five wide column" style="display: flex; justify-content: left; align-items: center;">
                         <div class="inline fields">
                             <label>语料能力：</label>
                             <div class="field">
@@ -300,7 +300,7 @@ Student:  Okay!"></textarea>
                             </div>
                         </div>
                     </div>
-                    <div class="two wide column" style="display: flex; justify-content: left; align-items: center;">
+                    <div class="three wide column" style="display: flex; justify-content: left; align-items: center;">
                         <div class="inline fields">
                             <a class="corpus_download" href="#" download></a>
                         </div>
@@ -328,8 +328,9 @@ Student:  Okay!"></textarea>
 
         $('.ui.dropdown.corpus_format').dropdown();
 
-        var CORPUS = {
-            generate: function () {
+        // 生成
+        $(".generate_corpus").click(
+            function () {
                 var role_name = $("input[name=role_name]").val();
                 if (role_name == "") {
                     role_name = "Max"
@@ -376,7 +377,7 @@ Student:  Okay!"></textarea>
                 $('input[name="corpus_func"]:checked').each(function () {
                     corpus_func.push($(this).val());
                 });
-                console.log(corpus_func)
+                console.log(corpus_func);
                 var startTime = new Date();
 
                 params = {
@@ -393,8 +394,8 @@ Student:  Okay!"></textarea>
                     corpus_nums: corpus_nums,
                     corpus_format: corpus_format,
                     corpus_func: corpus_func
-                }
-
+                };
+                $(".generate_corpus").addClass('loading');
                 $.ajax({
                     url: `${url_prefix}/backend-api/v2/generate_corpus`,
                     method: 'POST',
@@ -414,29 +415,20 @@ Student:  Okay!"></textarea>
                         console.log("time cost:" + seconds);
                         {#var new_url = URL.createObjectURL(data);#}
                         {#console.log(new_url);#}
-                        new_url = "#"
+                        new_url = `${url_prefix}/outputs/corpus/` + data
                         $('.corpus_download').attr('href', new_url);
-                        $('.corpus_download').append(new_url);
+                        $('.corpus_download').append(data);
                         alert("生成完成，请下载");
+                        $(".generate_corpus").removeClass('loading');
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         console.error("AJAX request failed: ", textStatus, errorThrown);
                         info = "request failed";
                         alert(info);
+                        $(".generate_corpus").removeClass('loading');
                     }
                 });
-
-
-            },
-        };
-
-        //查询
-        $(".generate_corpus").click(function () {
-            $(".generate_corpus").addClass('loading');
-            CORPUS.generate();
-            $(".generate_corpus").removeClass('loading');
-        });
-
+            });
     });
 </script>
 </body>

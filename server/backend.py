@@ -136,7 +136,7 @@ class Backend_Api:
                 "teaching_example": teaching_example,
             }
             corpus_info = {
-                "corpus_nums": corpus_nums,
+                "corpus_nums": int(corpus_nums),
                 "corpus_format": corpus_format,
                 "corpus_func": corpus_func,
             }
