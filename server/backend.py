@@ -49,6 +49,14 @@ class Backend_Api:
                 'function': self._uploads,
                 'methods': ['POST']
             },
+            '/backend-api/v2/uploads_corpus': {
+                'function': self._uploads_corpus,
+                'methods': ['POST']
+            },
+            '/backend-api/v2/convert_corpus': {
+                'function': self._convert_corpus,
+                'methods': ['POST']
+            },
         }
 
         llama2 = config['llama2']
@@ -153,6 +161,30 @@ class Backend_Api:
             }
             return msg, 500002
 
+    def _convert_corpus(self):
+        """
+        convert corpus
+        """
+        try:
+            print("convert corpus===================")
+            print(request.json)
+            datatype = request.json['datatype']
+            corpus_path = request.json['corpus_path']
+            print(datatype)
+            print(corpus_path)
+
+            return CorpusGenerator.convert_corpus(datatype, corpus_path)
+        except Exception as e:
+            print(e)
+            print(e.__traceback__.tb_next)
+            msg = {
+                '_action': '_ask',
+                'success': False,
+                "error": f"an error occurred {str(e)}"
+            }
+            print(msg)
+            return {'code': 100001, 'msg': 'convert error'}, 500001
+
     def _conversation(self):
         """
         conversation
@@ -255,6 +287,42 @@ class Backend_Api:
 
             return {'code': 100000, 'msg': 'upload success',
                     'data': {'bb_path': str(bb_urls), 'path': str(file_urls)}}, 200
+        except Exception as e:
+            print(e)
+            print(e.__traceback__.tb_next)
+            msg = {
+                '_action': '_ask',
+                'success': False,
+                "error": f"an error occurred {str(e)}"
+            }
+            return msg, 500004
+
+    def _uploads_corpus(self):
+        """
+        uploads corpus
+        """
+        try:
+            print("uploads corpus===============")
+            file_path = os.path.join(self.app.static_folder, 'corpus')
+            print(file_path)
+            if not os.path.exists(file_path):
+                os.makedirs(file_path)
+            print(request.files)
+
+            file = request.files['up_file']
+            print(file)
+
+            # ext = os.path.splitext(file.filename)[1]
+            # new_filename = datetime.now().strftime("%Y%m%d%H%M%S%f") + ('-%d') + ext
+            new_filename = secure_filename(file.filename)
+            new_file_path = os.path.join(file_path, new_filename)
+            file.save(new_file_path)
+
+            url_name = "corpus/" + new_filename
+            file_url = url_for('static', filename=url_name)
+
+            return {'code': 100000, 'msg': 'upload success',
+                    'data': {'path': str(file_url)}}, 200
         except Exception as e:
             print(e)
             print(e.__traceback__.tb_next)

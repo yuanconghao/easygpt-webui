@@ -4,6 +4,7 @@ import openai
 import json
 import io
 from flask import send_file
+from collections import defaultdict
 import concurrent.futures
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
@@ -208,3 +209,89 @@ class CorpusGenerator:
         system_prompt += "After the train departs, prize me and guide me to the next page."
 
         return system_prompt
+
+    @staticmethod
+    def convert_corpus(datatype, corpus_path):
+        messages = []
+        # /uploads/corpus/corpus_openai_20240126181444.jsonl => corpus_openai_20240126181444.jsonl
+        corpus_file_name = os.path.relpath(corpus_path, '/uploads/corpus/')
+        # corpus_openai_20240126181444  .jsonl
+        file_name_base, file_name_ext = os.path.splitext(corpus_file_name)
+        # corpus_openai_20240126181444-qianfan.jsonl
+        new_corpus_file_name = f"{file_name_base}-{datatype}{file_name_ext}"
+        new_corpus_file_path = os.path.join(CORPUS_CONVERT_DIR, new_corpus_file_name)
+        corpus_uploads_path = os.path.join(CORPUS_UPLOAD_DIR, corpus_file_name)
+        print(corpus_uploads_path)
+
+        with open(corpus_uploads_path, 'r') as src_file:
+            lines = src_file.readlines()
+        if len(lines) == 0:
+            return {"code": 200001, "msg": "jsonl file can not be empty"}
+
+        for line in lines:
+            messages.append(json.loads(line))
+
+        print(messages[0])
+
+        # check format
+        if datatype == "openai":
+            if not CorpusGenerator.check_format_qianfan(messages[0]):
+                return {"code": 200001, "msg": "jsonl file format error"}
+        elif datatype == "qianfan":
+            if not CorpusGenerator.check_format_openai(messages[0]):
+                return {"code": 200002, "msg": "jsonl file format error"}
+
+        # convert
+        with open(new_corpus_file_path, "a") as f:
+            if datatype == "openai":
+                return {"code": 200003, "msg": "待开发"}
+            elif datatype == "qianfan":
+                for message in messages:
+                    new_message = corpus.convert_openai2qianfan(message)
+                    f.write(json.dumps(new_message, ensure_ascii=False) + "\n")
+
+        new_corpus_url_path = os.path.join("/outputs/convert/", new_corpus_file_name)
+        return {"code": 100000, "msg": "success", "path": new_corpus_url_path}
+
+    @staticmethod
+    def check_format_openai(messages_line):
+        format_errors = defaultdict(int)
+        if "messages" not in messages_line:
+            format_errors["missing_messages_list"] += 1
+
+        messages = messages_line["messages"]
+        for message in messages:
+            if "role" not in message or "content" not in message:
+                format_errors["message_missing_key"] += 1
+
+            if any(k not in ("role", "content", "name") for k in message):
+                format_errors["message_unrecognized_key"] += 1
+
+            if message.get("role", None) not in ("system", "user", "assistant"):
+                format_errors["unrecognized_role"] += 1
+
+            content = message.get("content", None)
+            if not content or not isinstance(content, str):
+                format_errors["missing_content"] += 1
+
+        if not any(message.get("role", None) == "assistant" for message in messages):
+            format_errors["example_missing_assistant_message"] += 1
+
+        if format_errors:
+            return False
+        return True
+
+    @staticmethod
+    def check_format_qianfan(messages_line):
+        format_errors = defaultdict(int)
+
+        for message in messages_line:
+            if "prompt" not in message or "response" not in message:
+                format_errors["message_missing_key"] += 1
+
+            if any(k not in ("prompt", "response") for k in message):
+                format_errors["message_unrecognized_key"] += 1
+
+        if format_errors:
+            return False
+        return True

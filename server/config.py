@@ -7,4 +7,8 @@ models = {
 }
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+UPLOAD_DIR = os.path.join(ROOT_DIR, "uploads")
+OUTPUTS_DIR = os.path.join(ROOT_DIR, "outputs")
 CORPUS_DIR = os.path.join(ROOT_DIR, "outputs/corpus")
+CORPUS_UPLOAD_DIR = os.path.join(ROOT_DIR, "uploads/corpus")
+CORPUS_CONVERT_DIR = os.path.join(ROOT_DIR, "outputs/convert")

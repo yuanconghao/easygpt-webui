@@ -17,7 +17,7 @@
                     <font color="#778899">语料格式转换</font>
                 </div>
                 <div class="inline fields">
-                    <div class="column dm-uploader" id="menu_group">
+                    <div class="column dm-uploader" id="upload_corpus">
                         <div class="ui primary button" style="position: relative;overflow: hidden;">
                             <i class="upload icon"></i>
                             上传jsonl语料文件
@@ -25,6 +25,7 @@
                                    style="position: absolute;top: 0;right: 0;margin: 0;border: solid transparent;width: 100%;opacity: 0;cursor: pointer;">
                         </div>
                     </div>
+                    <a id="corpus_upload" href="#" download></a>
                 </div>
                 <div class="inline fields">
                     <label>转换格式：<i class="help circle icon popup_converter" data-content="将jsonl语料转换为对应模型的微调格式"
@@ -37,13 +38,13 @@
                     </div>
                     <div class="field">
                         <div class="ui radio checkbox">
-                            <input name="datatype" type="radio" value="qianfan">
+                            <input checked name="datatype" type="radio" value="qianfan">
                             <label>百度千帆</label>
                         </div>
                     </div>
                     <div class="field">
                         <div class="ui radio checkbox">
-                            <input name="datatype" type="radio" value="llama2">
+                            <input disabled name="datatype" type="radio" value="llama2">
                             <label>LLama原生</label>
                         </div>
                     </div>
@@ -51,32 +52,145 @@
                 <button class="ui primary button convert_corpus">
                     语料转换
                 </button>
+                <a id="corpus_convert_download" href="#" download></a>
+                <div class="ui ignored info message corpus_info">
+                    <p></p>
+                </div>
             </div>
 
         </div>
     </div>
 </div>
 
+<script src="{{ url_for('bp.static', filename='js/jquery.dm-uploader.min.js') }}"></script>
+
 <!-- scripts -->
+</body>
 <script>
     $(function () {
 
-        //popup
-        $('.popup_converter').popup();
+        const url_prefix = document.querySelector("body").getAttribute("data-urlprefix");
 
-        var CORPUS = {
-            convert: function () {
-                alert("开发中");
+        $('#upload_corpus').dmUploader({ //
+            url: `${url_prefix}/backend-api/v2/uploads_corpus`,
+            maxFileSize: 20000000, // 10M
+            multiple: false,
+            method: "post",
+            extraData: {
+                type: "jsonl",
             },
-        };
+            fieldName: "up_file",
+            onInit: function () {
+                // Plugin is ready to use
+                console.log('Penguin initialized :)');
+            },
+            onComplete: function () {
+                // All files in the queue are processed (success or error)
+                console.log('All pending tranfers finished');
+            },
+            onNewFile: function (id, file) {
+                // When a new file is added using the file selector or the DnD area
+                console.log('New file added #' + id);
 
-        //查询
-        $(".convert_corpus").click(function () {
-            $(".convert_corpus").addClass('loading');
-            CORPUS.convert();
+            },
+            onBeforeUpload: function (id) {
+                // about tho start uploading a file
+                console.log('Starting the upload of #' + id);
+
+            },
+            onUploadCanceled: function (id) {
+                // Happens when a file is directly canceled by the user.
+
+            },
+            onUploadProgress: function (id, percent) {
+                // Updating file progress
+
+            },
+            onUploadSuccess: function (id, data) {
+                $("#corpus_convert").addClass('loading');
+                // A file was successfully uploaded
+                console.log('Server Response for file #' + id + ': ' + JSON.stringify(data));
+                console.log('Upload of file #' + id + ' COMPLETED');
+                if (data.code != 100000) {
+                    $(".corpus_info p").html("上传失败:" + data.msg);
+                    $(".message").transition('fade');
+                    return false;
+                }
+                console.log(data.data.path)
+                $("#corpus_upload").attr('href', data.data.path);
+                $("#corpus_upload").append(data.data.path);
+                alert("上传成功");
+                $("#corpus_convert").removeClass('loading');
+            },
+            onUploadError: function (id, xhr, status, message) {
+                $("#corpus_convert").addClass('loading');
+                $(".corpus_info p").html("上传失败:" + message);
+                $(".message").transition('fade');
+                $("#corpus_convert").removeClass('loading');
+            },
+            onFallbackMode: function () {
+                // When the browser doesn't support this plugin :(
+                console.log('Plugin cant be used here, running Fallback callback');
+                $(".corpus_info p").html('浏览器不支持上传插件，请联系管理员');
+                $(".message").transition('fade');
+            },
+            onFileSizeError: function (file) {
+                console.log('File \'' + file.name + '\' cannot be added: size excess limit');
+                $(".corpus_info p").html('文件超过限制，最大5M');
+                $(".message").transition('fade');
+            },
         });
+
+        $(".convert_corpus").click(
+            function () {
+
+                var datatype = $('input[name="datatype"]:checked').val();
+                console.log(datatype)
+                var corpus_path = $("#corpus_upload").attr('href');
+                console.log(corpus_path)
+                if (corpus_path == "" || corpus_path == "#") {
+                    alert("请先上传要转换的语料文件");
+                    return;
+                }
+
+                $(".convert_corpus").addClass('loading');
+                params = {
+                    datatype: datatype,
+                    corpus_path: corpus_path,
+                };
+                $.ajax({
+                    url: `${url_prefix}/backend-api/v2/convert_corpus`,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(params),
+                    processData: false,
+                    xhrFields: {
+                        {#responseType: 'blob'#}
+                    },
+                    success: function (data) {
+                        console.log(data)
+                        {#var new_url = URL.createObjectURL(data);#}
+                        {#console.log(new_url);#}
+                        if (data.code != 100000) {
+                            alert(data.msg);
+                            $(".convert_corpus").removeClass('loading');
+                            return false;
+                        }
+                        new_url = `${url_prefix}` + data.path
+                        $('#corpus_convert_download').attr('href', new_url);
+                        $('#corpus_convert_download').append(data.path);
+                        alert("转换完成，请下载");
+                        $(".convert_corpus").removeClass('loading');
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("AJAX request failed: ", textStatus, errorThrown);
+                        info = "request failed";
+                        alert(info);
+                        $(".convert_corpus").removeClass('loading');
+                    }
+                });
+            });
 
     });
 </script>
-</body>
 </html>
