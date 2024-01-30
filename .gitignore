@@ -1,3 +1,13 @@
 uploads
 uploads/*
 .idea/*
+server/__pycache__
+server/__pycache__/*
+server/models/__pycache__
+server/models/__pycache__/*
+server/templates/__pycache__
+server/templates/__pycache__/*
+server/utils/__pycache__
+server/utils/__pycache__/*
+translations
+translations/*

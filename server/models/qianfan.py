@@ -6,8 +6,8 @@ from typing import Generator, Union
 
 qianfan_urls = {
     # "qianfan_llama2_13b_food": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/h5t0irbl_llama2_13_food_pull",
-    "qianfan_llama2_13b_food": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/qp7smcbs_order_food_v3",
-    "qianfan_llama2_7b_food": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/fuifin7u_order_food_v4",
+    "qianfan_llama2_13b_teacher": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/qp7smcbs_order_food_v3",
+    "qianfan_llama2_7b_teacher": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/tyz3x2d7_ai_teacher_0130",
     "qianfan_ernie_bot_4": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions_pro",
     "qianfan_ernie_bot_8k": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie_bot_8k",
 }
@@ -44,12 +44,12 @@ class QianfanGenerator:
             print("request_qianfan_ernie_bot_4")
             # return QianfanGenerator.generate_ernie_bot_4(messages, stream)
             return QianfanGenerator.generate_ernie_bot(model, messages, stream)
-        elif model == "qianfan_llama2_7b_food":
-            print("request_qianfan_llama2_7b_food")
+        elif model == "qianfan_llama2_7b_teacher":
+            print("request_qianfan_llama2_7b_teacher")
             # return "暂停服务，联系yuanconghao开通"
             return QianfanGenerator.generate_llama2_chat(model, messages, stream)
-        elif model == "qianfan_llama2_13b_food":
-            print("request_qianfan_llama2_13b_food")
+        elif model == "qianfan_llama2_13b_teacher":
+            print("request_qianfan_llama2_13b_teacher")
             return "暂停服务，联系yuanconghao开通"
             # return QianfanGenerator.generate_llama2_chat(model, messages, stream)
         elif model == "qianfan_ernie_food":
