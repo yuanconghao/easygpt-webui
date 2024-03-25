@@ -57,6 +57,10 @@ class Backend_Api:
                 'function': self._convert_corpus,
                 'methods': ['POST']
             },
+            '/backend-api/v2/user_info_bind': {
+                'function': self._user_info_bind,
+                'methods': ['POST']
+            },
         }
 
         llama2 = config['llama2']
@@ -332,3 +336,10 @@ class Backend_Api:
                 "error": f"an error occurred {str(e)}"
             }
             return msg, 500004
+
+    def _user_info_bind(self):
+        phone = request.json['phone']
+        return {
+            "url": "https://kcs.51talk.com/easygpt/uploads/51_test.jpg",
+            "message": "添加该课程顾问"
+        }
