@@ -341,5 +341,5 @@ class Backend_Api:
         phone = request.json['phone']
         return {
             "url": "https://kcs.51talk.com/easygpt/uploads/51_test.jpg",
-            "message": "扫描二维码添加该课程顾问"
+            "message": "感谢您的确认。已经为您安排了课程顾问，会第一时间联系您。您也可以扫描下面的二维码添加课程顾问。课程顾问会为您提供详细的课程介绍和咨询服务。"
         }
