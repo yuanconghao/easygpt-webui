@@ -350,7 +350,7 @@ class Backend_Api:
 
 
     def _geshui_calc(self):
-        income = float(request.json['phone'])
+        income = float(request.json['income'])
         zhuanxiang = int(request.json['zhuanxiang'])
 
         yijin = income * 0.12
