@@ -91,7 +91,7 @@ json_data = {
 }
 
 def generate_content(instruct):
-    model = "gpt-4-1106-preview"
+    model = "gpt-3.5-turbo-16k"
     conversation = []
     prompt = {'content': instruct, 'role': 'user'}
     images = []
