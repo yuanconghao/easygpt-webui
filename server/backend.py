@@ -211,7 +211,9 @@ class Backend_Api:
 
             if not session_id or session_id == "undefined":
                 session_id = None
-
+            print(conversation)
+            print(prompt)
+            print(images)
             messages = Prompter.build_messages(model, conversation, prompt, images)
             print("messages==================")
             print(messages)
