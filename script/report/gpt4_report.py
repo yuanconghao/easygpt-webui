@@ -1,7 +1,6 @@
 import sys
 
 sys.path.append("../../")
-from server.models.gpt import GPTGenerator
 from server.models.prompter import Prompter
 import openai
 import time
