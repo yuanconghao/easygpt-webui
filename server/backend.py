@@ -104,7 +104,8 @@ class Backend_Api:
             print(request.json)
             text = request.json['text']
             voice = request.json['voice']
-            return TTSGenerator.generate_tts(text, voice)
+            r_format = request.json['r_format']
+            return TTSGenerator.generate_tts(text, voice, r_format)
         except Exception as e:
             print(e)
             print(e.__traceback__.tb_next)

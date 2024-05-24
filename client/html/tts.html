@@ -34,7 +34,9 @@
     <div class="ui one wide column">
         <div class="ui form">
             <div class="field">
-                <textarea placeholder="I have a dream that my four little children will one day live in a nation where they will not be judged by the color of their skin but by the content of their character." name="txt" rows="15" cols="100"></textarea>
+                <textarea
+                        placeholder="I have a dream that my four little children will one day live in a nation where they will not be judged by the color of their skin but by the content of their character."
+                        name="txt" rows="15" cols="100"></textarea>
             </div>
             <div class="inline fields">
                 <label>Voices</label>
@@ -76,7 +78,40 @@
                 </div>
             </div>
             <div class="ui divider"></div>
-
+            <div class="inline fields">
+                <label>Response Format</label>
+                <div class="field">
+                    <div class="ui radio checkbox">
+                        <input type="radio" name="r_format" checked="checked" value="mp3">
+                        <label>mp3</label>
+                    </div>
+                </div>
+                {#                <div class="field">#}
+                {#                    <div class="ui radio checkbox">#}
+                {#                        <input type="radio" name="r_format" value="opus">#}
+                {#                        <label>opus</label>#}
+                {#                    </div>#}
+                {#                </div>#}
+                <div class="field">
+                    <div class="ui radio checkbox">
+                        <input type="radio" name="r_format" value="flac">
+                        <label>flac</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui radio checkbox">
+                        <input type="radio" name="r_format" value="wav">
+                        <label>wav</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui radio checkbox">
+                        <input type="radio" name="r_format" value="pcm">
+                        <label>pcm</label>
+                    </div>
+                </div>
+            </div>
+            <div class="ui divider"></div>
             <div class="field">
                 <div class="ui primary button get_tts">TTS播放</div>
             </div>
@@ -89,9 +124,19 @@
             </div>
             <div id="tts_div_id">
                 <audio id="tts_audio_id" autoplay="autoplay" controls>
+{#                    <!-- MP3 audio source -->#}
                     <source id="tts_source_id" src="" type="audio/mpeg">
-                    <embed id="tts_embed_id" height="0" width="0" src="">
+                    <!-- WAV audio source -->
+{#                    <source id="tts_source_wav_id" src="" type="audio/wav">#}
+{#                    <!-- PCM audio source (note: there's no standard MIME type for raw PCM files) -->#}
+{#                    <source id="tts_source_pcm_id" src="" type="audio/pcm">#}
+{#                    <source id="tts_source_flac_id" src="" type="audio/flac">#}
+{#                    <!-- Fallback embed for older browsers that do not support the <audio> element -->#}
+{#                    <embed id="tts_embed_id" height="0" width="0" src="">#}
                 </audio>
+            </div>
+            <div>
+                <a class="ui link ignored pcm_download" href="#"></a>
             </div>
         </div>
     </div>
@@ -107,14 +152,19 @@
         // md5
         $(".get_tts").click(function () {
             var txt = $("textarea[name=txt]").val();
+            if (txt == "") {
+                alert("请输入文本");
+                return;
+            }
             var voice = $('input[name="voice"]:checked').val();
+            var r_format = $('input[name="r_format"]:checked').val();
             var startTime = new Date();
             $(".get_tts").addClass('loading');
             $.ajax({
                 url: `${url_prefix}/backend-api/v2/generate_tts`,
                 method: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({text: txt, voice: voice}),
+                data: JSON.stringify({text: txt, voice: voice, r_format: r_format}),
                 processData: false,
                 xhrFields: {
                     responseType: 'blob'
@@ -128,9 +178,36 @@
                     console.log(data)
                     var new_url = URL.createObjectURL(data);
                     console.log(new_url);
-                    $('#tts_source_id').attr('src', new_url);
-                    $('#tts_audio_id').get(0).load();
-                    $('#tts_audio_id').get(0).play();
+
+                    /**
+                    if (r_format == "mp3") {
+                        $('#tts_source_mp3_id').attr('src', new_url);
+                        $('#tts_audio_id').get(0).load();
+                        $('#tts_audio_id').get(0).play();
+                    } else if (r_format == "wav") {
+                        $('#tts_source_wav_id').attr('src', new_url);
+                        $('#tts_audio_id').get(0).load();
+                        $('#tts_audio_id').get(0).play();
+                    } else if (r_format == "pcm") {
+                        $('#tts_source_pcm_id').attr('src', new_url);
+                        $('#tts_audio_id').get(0).load();
+                        $('#tts_audio_id').get(0).play();
+                    } else if (r_format == "flac") {
+                        $('#tts_source_flac_id').attr('src', new_url);
+                        $('#tts_audio_id').get(0).load();
+                        $('#tts_audio_id').get(0).play();
+                    }**/
+                    if (r_format == "pcm") {
+                        $('.pcm_download').attr('href', new_url).attr('download', 'audio.pcm');
+                        $('.pcm_download').append('audio.pcm');
+                        $('#tts_source_id').attr('src', new_url);
+                        $('#tts_audio_id').get(0).load();
+                        $('#tts_audio_id').get(0).play();
+                    }else {
+                        $('#tts_audio_id').attr('src', new_url);
+                        $('#tts_audio_id').get(0).load();
+                        $('#tts_audio_id').get(0).play();
+                    }
 
                     info = "role: " + voice + ", character length: " + txt.length + ", cost: " + seconds + "s";
                     $(".tts_info p").html(info);
@@ -143,7 +220,6 @@
                     $(".tts_info p").html(info);
                 }
             });
-
 
 
         });
