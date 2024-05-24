@@ -199,7 +199,7 @@
                     }**/
                     if (r_format == "pcm") {
                         $('.pcm_download').attr('href', new_url).attr('download', 'audio.pcm');
-                        $('.pcm_download').append('audio.pcm');
+                        $('.pcm_download').html('audio.pcm');
                         $('#tts_source_id').attr('src', new_url);
                         $('#tts_audio_id').get(0).load();
                         $('#tts_audio_id').get(0).play();
