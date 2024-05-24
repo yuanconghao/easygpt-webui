@@ -15,7 +15,7 @@ class TTSGenerator:
         """
         time1 = time.time()
         response = openai.audio.speech.create(
-            model="tts-1-hd",
+            model="tts-1",
             voice=voice,
             input=text.strip(),
         )
