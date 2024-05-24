@@ -27,3 +27,5 @@ torch
 peft
 sentencepiece
 socksio
+ffmpeg-python
+pydub

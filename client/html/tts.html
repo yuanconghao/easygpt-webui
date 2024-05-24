@@ -36,7 +36,7 @@
             <div class="field">
                 <textarea
                         placeholder="I have a dream that my four little children will one day live in a nation where they will not be judged by the color of their skin but by the content of their character."
-                        name="txt" rows="15" cols="100"></textarea>
+                        name="txt" rows="13" cols="100"></textarea>
             </div>
             <div class="inline fields">
                 <label>Voices</label>
@@ -78,36 +78,50 @@
                 </div>
             </div>
             <div class="ui divider"></div>
-            <div class="inline fields">
-                <label>Response Format</label>
-                <div class="field">
-                    <div class="ui radio checkbox">
-                        <input type="radio" name="r_format" checked="checked" value="mp3">
-                        <label>mp3</label>
+            <div class="ui grid" style="margin-top:2px;">
+                <div class="inline fields">
+                    <label>Response Format</label>
+                    <div class="field">
+                        <div class="ui radio checkbox">
+                            <input type="radio" name="r_format" checked="checked" value="mp3">
+                            <label>mp3</label>
+                        </div>
+                    </div>
+                    {#                <div class="field">#}
+                    {#                    <div class="ui radio checkbox">#}
+                    {#                        <input type="radio" name="r_format" value="opus">#}
+                    {#                        <label>opus</label>#}
+                    {#                    </div>#}
+                    {#                </div>#}
+                    <div class="field">
+                        <div class="ui radio checkbox">
+                            <input type="radio" name="r_format" value="flac">
+                            <label>flac</label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui radio checkbox">
+                            <input type="radio" name="r_format" value="wav">
+                            <label>wav</label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui radio checkbox">
+                            <input type="radio" name="r_format" value="pcm">
+                            <label>pcm</label>
+                        </div>
                     </div>
                 </div>
-                {#                <div class="field">#}
-                {#                    <div class="ui radio checkbox">#}
-                {#                        <input type="radio" name="r_format" value="opus">#}
-                {#                        <label>opus</label>#}
-                {#                    </div>#}
-                {#                </div>#}
-                <div class="field">
-                    <div class="ui radio checkbox">
-                        <input type="radio" name="r_format" value="flac">
-                        <label>flac</label>
-                    </div>
-                </div>
-                <div class="field">
-                    <div class="ui radio checkbox">
-                        <input type="radio" name="r_format" value="wav">
-                        <label>wav</label>
-                    </div>
-                </div>
-                <div class="field">
-                    <div class="ui radio checkbox">
-                        <input type="radio" name="r_format" value="pcm">
-                        <label>pcm</label>
+                <div class="inline fields">
+                    <label>采样率</label>
+                    <div class="ui selection dropdown corpus_nums" style="min-width: 3em;">
+                        <input name="tts_sample_rate" type="hidden" value="24000">
+                        <i class="dropdown icon"></i>
+                        <div class="default text">24000</div>
+                        <div class="menu">
+                            <div class="item" data-value="16000">16000</div>
+                            <div class="item" data-value="24000">24000</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -124,15 +138,15 @@
             </div>
             <div id="tts_div_id">
                 <audio id="tts_audio_id" autoplay="autoplay" controls>
-{#                    <!-- MP3 audio source -->#}
+                    {#                    <!-- MP3 audio source -->#}
                     <source id="tts_source_id" src="" type="audio/mpeg">
                     <!-- WAV audio source -->
-{#                    <source id="tts_source_wav_id" src="" type="audio/wav">#}
-{#                    <!-- PCM audio source (note: there's no standard MIME type for raw PCM files) -->#}
-{#                    <source id="tts_source_pcm_id" src="" type="audio/pcm">#}
-{#                    <source id="tts_source_flac_id" src="" type="audio/flac">#}
-{#                    <!-- Fallback embed for older browsers that do not support the <audio> element -->#}
-{#                    <embed id="tts_embed_id" height="0" width="0" src="">#}
+                    {#                    <source id="tts_source_wav_id" src="" type="audio/wav">#}
+                    {#                    <!-- PCM audio source (note: there's no standard MIME type for raw PCM files) -->#}
+                    {#                    <source id="tts_source_pcm_id" src="" type="audio/pcm">#}
+                    {#                    <source id="tts_source_flac_id" src="" type="audio/flac">#}
+                    {#                    <!-- Fallback embed for older browsers that do not support the <audio> element -->#}
+                    {#                    <embed id="tts_embed_id" height="0" width="0" src="">#}
                 </audio>
             </div>
             <div>
@@ -145,6 +159,7 @@
 <!-- scripts -->
 <script>
     window.conversation_id = "{{ chat_id }}";
+    $('.ui.dropdown.corpus_nums').dropdown();
 
     $(function () {
 
@@ -158,13 +173,14 @@
             }
             var voice = $('input[name="voice"]:checked').val();
             var r_format = $('input[name="r_format"]:checked').val();
+            var tts_sample_rate = $("input[name=tts_sample_rate]").val();
             var startTime = new Date();
             $(".get_tts").addClass('loading');
             $.ajax({
                 url: `${url_prefix}/backend-api/v2/generate_tts`,
                 method: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({text: txt, voice: voice, r_format: r_format}),
+                data: JSON.stringify({text: txt, voice: voice, r_format: r_format, sample_rate: tts_sample_rate}),
                 processData: false,
                 xhrFields: {
                     responseType: 'blob'
@@ -180,7 +196,7 @@
                     console.log(new_url);
 
                     /**
-                    if (r_format == "mp3") {
+                     if (r_format == "mp3") {
                         $('#tts_source_mp3_id').attr('src', new_url);
                         $('#tts_audio_id').get(0).load();
                         $('#tts_audio_id').get(0).play();
@@ -203,7 +219,7 @@
                         $('#tts_source_id').attr('src', new_url);
                         $('#tts_audio_id').get(0).load();
                         $('#tts_audio_id').get(0).play();
-                    }else {
+                    } else {
                         $('#tts_audio_id').attr('src', new_url);
                         $('#tts_audio_id').get(0).load();
                         $('#tts_audio_id').get(0).play();
