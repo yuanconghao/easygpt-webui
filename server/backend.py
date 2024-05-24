@@ -106,7 +106,8 @@ class Backend_Api:
             voice = request.json['voice']
             r_format = request.json['r_format']
             sample_rate = int(request.json['sample_rate'])
-            return TTSGenerator.generate_tts(text, voice, r_format, sample_rate)
+            model = request.json['model']
+            return TTSGenerator.generate_tts(text, voice, r_format, sample_rate, model)
         except Exception as e:
             print(e)
             print(e.__traceback__.tb_next)

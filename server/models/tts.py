@@ -9,13 +9,13 @@ from pydub import AudioSegment
 class TTSGenerator:
 
     @staticmethod
-    def generate_tts(text, voice, r_format, sample_rate=24000):
+    def generate_tts(text, voice, r_format, sample_rate=24000, model="tts-1"):
         """
         generate tts by openai
         """
         time1 = time.time()
         response = openai.audio.speech.create(
-            model="tts-1",
+            model=model,
             voice=voice,
             input=text.strip(),
             response_format=r_format,
