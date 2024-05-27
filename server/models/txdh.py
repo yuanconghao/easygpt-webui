@@ -364,7 +364,7 @@ class TXDHGenerator:
     def send_audio(appkey, access_token, sessionid, text, voice, model):
 
         # 先调用openai 获取tts stream
-        audio_stream = TTSGenerator.generate_tts_stream_16(text, voice, 'pcm', model)
+        audio_stream = TTSGenerator.generate_tts_stream_16(text, voice, 'wav', model)
         print("send_audio====================")
         print(audio_stream)
 
@@ -415,15 +415,19 @@ class TXDHGenerator:
             chunk_size = 5120
 
             # Step 1: Split the raw audio bytes into chunks of specified size
-            raw_chunks = [audio_data[i:i + chunk_size] for i in range(0, len(audio_data), chunk_size)]
+            #raw_chunks = [audio_data[i:i + chunk_size] for i in range(0, len(audio_data), chunk_size)]
 
             # Step 2: Encode each chunk to Base64 and send
-            for i, raw_chunk in enumerate(raw_chunks):
+            # for i, raw_chunk in enumerate(raw_chunks):
+            i = 0
+            for i in range(0, len(audio_data), chunk_size):
+                raw_chunk = audio_data[i:i+chunk_size]
+                i=i+1
                 base64_encoded_chunk = base64.b64encode(raw_chunk).decode('utf-8')
                 # print(f"Chunk {i + 1}: {base64_encoded_chunk}")
-                print(f"Chunk {i + 1}")
+                print(f"Chunk {i}")
 
-                isFinal = (i == len(raw_chunks) - 1)
+                isFinal = (len(raw_chunk) < chunk_size)
                 # 构建发送音频的指令
                 audio_command = {
                     "Header": {},
