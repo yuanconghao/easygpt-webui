@@ -425,7 +425,7 @@ class TXDHGenerator:
             #     print(ws.recv())
                 #time.sleep(0.12)
 
-            chunk_size = 512  # 每次读取512字节
+            chunk_size = 256  # 每次读取512字节
             seq = 1  # 初始化序列号
 
             while True:
