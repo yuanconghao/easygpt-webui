@@ -420,7 +420,7 @@ class TXDHGenerator:
             # Step 2: Encode each chunk to Base64 and send
             for i, raw_chunk in enumerate(raw_chunks):
                 base64_encoded_chunk = base64.b64encode(raw_chunk).decode('utf-8')
-                print(f"Chunk {i + 1}: {base64_encoded_chunk}")
+                # print(f"Chunk {i + 1}: {base64_encoded_chunk}")
 
                 isFinal = (i == len(raw_chunks) - 1)
                 # 构建发送音频的指令
