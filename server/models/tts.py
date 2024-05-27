@@ -32,7 +32,7 @@ class TTSGenerator:
             "cost": cost,
             "c_nums": character_num,
         }
-        print(info)
+        print("generate_tts", info)
         mimetype = "audio/" + r_format
 
         if sample_rate == 24000 or r_format == "pcm":
@@ -50,5 +50,47 @@ class TTSGenerator:
         output_stream.seek(0)  # Reset the stream position to the beginning
         print("16k output")
         return send_file(output_stream, mimetype=mimetype)
+
+    @staticmethod
+    def generate_tts_stream_16(text, voice, r_format, model="tts-1"):
+        """
+        generate tts by openai
+        """
+        time1 = time.time()
+        response = openai.audio.speech.create(
+            model=model,
+            voice=voice,
+            input=text.strip(),
+            response_format=r_format,
+        )
+
+        print("16k openai tts res")
+        # Convert the binary response content to a byte stream
+        byte_stream = io.BytesIO(response.content)
+        # byte_stream = io.BytesIO(content)
+        byte_stream.name = 'audio.' + r_format
+        c_format = r_format
+        if r_format == "pcm":
+            c_format = "raw"
+        time2 = time.time()
+        cost = time2 - time1
+        character_num = len(text)
+        info = {
+            "cost": cost,
+            "c_nums": character_num,
+        }
+        print("generate_tts_stream_16", info)
+
+        # Use pydub to read the audio data and convert the sample rate to 16kHz
+        audio = AudioSegment.from_file(byte_stream, format=r_format)
+        audio_16k = audio.set_frame_rate(16000)
+        print("convert sample")
+        # Export the converted audio to a new byte stream
+        output_stream = io.BytesIO()
+        audio_16k.export(output_stream, format="raw")
+        output_stream.seek(0)  # Reset the stream position to the beginning
+        print("16k output")
+        print(output_stream)
+        return output_stream
 
 

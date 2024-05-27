@@ -11,3 +11,5 @@ server/utils/__pycache__
 server/utils/__pycache__/*
 translations
 translations/*
+translations/*/*
+translations/*/*/*.mo

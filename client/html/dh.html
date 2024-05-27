@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0"/>
+    <meta name="description" content="A conversational AI system that listens, learns, and challenges"/>
+    {#    <link rel="stylesheet" href="{{ url_for('bp.static', filename='css/style.css') }}"/>#}
+    <link rel="stylesheet" href="{{ url_for('bp.static', filename='semantic/semantic.min.css') }}"/>
+    <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="{{ url_for('bp.static', filename='img/apple-touch-icon.png') }}"/>
+    <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="{{ url_for('bp.static', filename='img/favicon-32x32.png') }}"/>
+    <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="{{ url_for('bp.static', filename='img/favicon-16x16.png') }}"/>
+    <link rel="manifest" href="{{ url_for('bp.static', filename='img/site.webmanifest') }}"/>
+    <script src="{{ url_for('bp.static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('bp.static', filename='semantic/semantic.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('bp.static', filename='css/dracula.min.css') }}"/>
+
+    <link rel="stylesheet" href="{{ url_for('bp.static', filename='jsonFormater/jsonFormater.css') }}"/>
+    <script src="{{ url_for('bp.static', filename='webrtc/webrtc.js') }}"></script>
+
+    <script src="{{ url_for('bp.static', filename='jsonFormater/jsonFormater.js') }}"></script>
+    <title>EasyGPT--DH</title>
+    <style>
+        .ui.grid {
+            margin: 0rem -1rem;
+        }
+
+        .ui.grid > .column {
+            padding: 0;
+        }
+
+        .video-container {
+            width: 400px;
+            height: 600px;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .video-container img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .video-js {
+            width: 400px;
+            height: 600px;
+        }
+    </style>
+</head>
+
+<body data-urlprefix="{{ url_prefix }}">
+
+<div class="ui container">
+    <div class="ui grid">
+        <div class="ten wide column">
+            <div class="ui wide column">
+                <div class="ui form">
+                    <div class="ui two column stackable grid">
+                        <div class="inline fields">
+                            <label>appkey</label>
+                            <input type="text" value="" name="appkey" size="28">
+                        </div>
+                        <div class="inline fields">
+                            <label>accesstoken</label>
+                            <input type="text" name="access_token" size="28">
+                        </div>
+                        <div class="inline fields">
+                            <label>virtualmankey</label>
+                            <input type="text" name="virtualmankey" size="30">
+                        </div>
+                        <div class="inline fields">
+                            <div class="ui primary button create_session">创建直播间</div>
+                            <div class="ui orange button list_session">查询会话列表</div>
+                        </div>
+                    </div>
+                    <div class="ui divider"></div>
+                    <div class="ui two column stackable grid">
+                        <div class="inline fields">
+                            <label>sessionid</label>
+                            <input class="sessionid" type="text" name="sessionid" value="" size="30">
+                        </div>
+                        <div class="inline fields">
+                            <div class="ui orange button detail_session">会话状态</div>
+                            <div class="ui green button start_session">开启会话</div>
+                            <div class="ui red button close_session">关闭会话</div>
+                        </div>
+                        <div class="inline fields">
+                            <label>remoteAddr</label>
+                            <input readonly class="remote_url" type="text" name="remote_url" value="" size="50">
+                        </div>
+                    </div>
+                    <div class="ui divider"></div>
+                    <!--
+                    <div class="inline fields">
+                        <div class="ui primary button create_ws">创建长链接</div>
+                    </div>-->
+                    <div class="field">
+                <textarea
+                        placeholder="I have a dream that my four little children will one day live in a nation where they will not be judged by the color of their skin but by the content of their character."
+                        name="txt" rows="5" cols="100">I have a dream that my four little children will one day live in a nation where they will not be judged by the color of their skin but by the content of their character.</textarea>
+                    </div>
+                    <div class="ui grid">
+                        <div class="inline fields">
+                            <label>Voices</label>
+                            <div class="ui selection dropdown tts_voice" style="min-width: 7em;">
+                                <input name="tts_voice" type="hidden" value="alloy">
+                                <i class="dropdown icon"></i>
+                                <div class="default text">Alloy</div>
+                                <div class="menu">
+                                    <div class="item" data-value="alloy">Alloy</div>
+                                    <div class="item" data-value="echo">Echo</div>
+                                    <div class="item" data-value="fable">Fable</div>
+                                    <div class="item" data-value="onyx">Onyx</div>
+                                    <div class="item" data-value="nova">Nova</div>
+                                    <div class="item" data-value="shimmer">Shimmer</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="inline fields">
+                            <label>TTS模型
+                                <i class="help circle icon popup_converter"
+                                   data-content="tts-1 高速度；tts-1-hd 高质量；"
+                                   data-variation="wide"></i>
+                            </label>
+                            <div class="ui selection dropdown tts_model" style="min-width: 7em;">
+                                <input name="tts_model" type="hidden" value="tts-1">
+                                <i class="dropdown icon"></i>
+                                <div class="default text">tts-1</div>
+                                <div class="menu">
+                                    <div class="item" data-value="tts-1">tts-1</div>
+                                    <div class="item" data-value="tts-1-hd">tts-1-hd</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui green button send_audio">音频驱动</div>
+                            <div class="ui teal button send_text">文本驱动</div>
+                        </div>
+                    </div>
+                    <div id="tts_div_id">
+                        <audio id="tts_audio_id" autoplay="autoplay" controls>
+                            {#                    <!-- MP3 audio source -->#}
+                            <source id="tts_source_id" src="" type="audio/mpeg">
+                        </audio>
+                    </div>
+                    <div class="ui divider"></div>
+
+                    <div class="ui info message" id="json_container"
+                         style="width: 100%;height: auto;word-wrap:break-word;word-break:break-all;">
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="six wide column">
+            <div class="video-container" id="video-container">
+                <video id="my_video" autoplay playsinline></video>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- scripts -->
+<script>
+
+    async function startWebRTCStream(streamUrl) {
+        const video = document.getElementById('my_video');
+
+        try {
+            const pc = new RTCPeerConnection();
+            pc.onicecandidate = (event) => {
+                if (event.candidate) {
+                    // Send ICE candidate to the server or peer
+                }
+            };
+
+            pc.ontrack = (event) => {
+                video.srcObject = event.streams[0];
+            };
+
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+
+            // Send offer to the server and receive the answer
+            const response = await fetch(streamUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({sdp: offer.sdp, type: offer.type})
+            });
+
+            const answer = await response.json();
+            await pc.setRemoteDescription(new RTCSessionDescription(answer));
+        } catch (error) {
+            console.error('Error starting WebRTC stream:', error);
+        }
+    }
+
+    window.conversation_id = "{{ chat_id }}";
+    $('.popup_converter').popup();
+    $('.ui.dropdown.tts_voice').dropdown();
+    $('.ui.dropdown.tts_model').dropdown();
+
+
+    $(function () {
+        const url_prefix = document.querySelector("body").getAttribute("data-urlprefix");
+        // 创建直播间
+        $(".create_session").click(function () {
+            var appkey = $("input[name=appkey]").val();
+            var access_token = $("input[name=access_token]").val();
+            var virtualmankey = $("input[name=virtualmankey]").val();
+            if (appkey == '' || access_token == '' || virtualmankey == '') {
+                alert("请输入appkey,access_token,virtualmankey");
+                return;
+            }
+            $(".create_session").addClass('loading');
+            $.ajax({
+                url: `${url_prefix}/backend-api/v2/create_session`,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    appkey: appkey,
+                    access_token: access_token,
+                    virtualmankey: virtualmankey,
+                }),
+                success: function (data) {
+                    console.log(data);
+                    $(".create_session").removeClass('loading');
+                    try {
+
+                        // jsonFormater show
+                        var str_data = JSON.stringify(data);
+                        var options = {
+                            dom: 'json_container' //对应容器的id
+                        };
+                        var jf = new JsonFormatter(options); //创建对象
+                        jf.doFormat(str_data);
+
+                        if (data["Header"]["Code"] != 0) {
+                            alert(data["Header"]["Message"]);
+                            return;
+                        }
+
+                        sessionid = data["Payload"]["SessionId"]
+                        $(".sessionid").val(sessionid);
+                        remote_url = data["Payload"]["PlayStreamAddr"]
+                        $(".remote_url").val(remote_url);
+                        {#const webrtc_url = data["Payload"]["PlayStreamAddr"];#}
+                        {#startWebRTCStream(webrtc_url);#}
+
+                    } catch (e) {
+                        console.error("Error parsing JSON response:", e);
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX request failed: ", textStatus, errorThrown);
+                    $(".create_session").removeClass('loading');
+                    var info = "request failed";
+                    $("#dh_info p").html(info);
+                }
+            });
+        });
+
+        // 会话列表
+        $(".list_session").click(function () {
+            var appkey = $("input[name=appkey]").val();
+            var access_token = $("input[name=access_token]").val();
+            var virtualmankey = $("input[name=virtualmankey]").val();
+            if (appkey == '' || access_token == '' || virtualmankey == '') {
+                alert("请输入appkey,access_token,virtualmankey");
+                return;
+            }
+            $(".list_session").addClass('loading');
+            $.ajax({
+                url: `${url_prefix}/backend-api/v2/list_session`,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    appkey: appkey,
+                    access_token: access_token,
+                    virtualmankey: virtualmankey,
+                }),
+                success: function (data) {
+                    console.log(data);
+                    $(".list_session").removeClass('loading');
+                    try {
+
+                        // jsonFormater show
+                        var str_data = JSON.stringify(data);
+                        var options = {
+                            dom: 'json_container' //对应容器的id
+                        };
+                        var jf = new JsonFormatter(options); //创建对象
+                        jf.doFormat(str_data);
+
+                        if (data["Header"]["Code"] != 0) {
+                            alert(data["Header"]["Message"]);
+                            return;
+                        }
+
+                    } catch (e) {
+                        console.error("Error parsing JSON response:", e);
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX request failed: ", textStatus, errorThrown);
+                    $(".list_session").removeClass('loading');
+                    var info = "request failed";
+                    $("#dh_info p").html(info);
+                }
+            });
+        });
+
+        // 会话状态
+        $(".detail_session").click(function () {
+
+            var appkey = $("input[name=appkey]").val();
+            var access_token = $("input[name=access_token]").val();
+            var virtualmankey = $("input[name=virtualmankey]").val();
+            if (appkey == '' || access_token == '' || virtualmankey == '') {
+                alert("请输入appkey,access_token,virtualmankey");
+                return;
+            }
+
+            var sessionid = $("input[name=sessionid]").val();
+            if (sessionid == "") {
+                alert("sessionid不能为空");
+                return;
+            }
+
+            $(".detail_session").addClass('loading');
+            $.ajax({
+                url: `${url_prefix}/backend-api/v2/detail_session`,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    appkey: appkey,
+                    access_token: access_token,
+                    virtualmankey: virtualmankey,
+                    sessionid: sessionid,
+                }),
+                success: function (data) {
+                    console.log(data);
+                    $(".detail_session").removeClass('loading');
+                    try {
+                        // jsonFormater show
+                        var str_data = JSON.stringify(data);
+                        var options = {
+                            dom: 'json_container' //对应容器的id
+                        };
+                        var jf = new JsonFormatter(options); //创建对象
+                        jf.doFormat(str_data);
+
+                        if (data["Header"]["Code"] != 0) {
+                            alert(data["Header"]["Message"]);
+                            return;
+                        }
+
+                        {#const webrtc_url = data["Payload"]["PlayStreamAddr"];#}
+                        {#startWebRTCStream(webrtc_url);#}
+
+                    } catch (e) {
+                        console.error("Error parsing JSON response:", e);
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX request failed: ", textStatus, errorThrown);
+                    $(".detail_session").removeClass('loading');
+                    var info = "request failed";
+                    $("#dh_info p").html(info);
+                }
+            });
+        });
+
+        // 开启会话
+        $(".start_session").click(function () {
+
+            var appkey = $("input[name=appkey]").val();
+            var access_token = $("input[name=access_token]").val();
+            var virtualmankey = $("input[name=virtualmankey]").val();
+            if (appkey == '' || access_token == '' || virtualmankey == '') {
+                alert("请输入appkey,access_token,virtualmankey");
+                return;
+            }
+
+            var sessionid = $("input[name=sessionid]").val();
+            if (sessionid == "") {
+                alert("sessionid不能为空");
+                return;
+            }
+
+            $(".start_session").addClass('loading');
+            $.ajax({
+                url: `${url_prefix}/backend-api/v2/start_session`,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    appkey: appkey,
+                    access_token: access_token,
+                    virtualmankey: virtualmankey,
+                    sessionid: sessionid,
+                }),
+                success: function (data) {
+                    console.log(data);
+                    $(".start_session").removeClass('loading');
+                    try {
+                        // jsonFormater show
+                        var str_data = JSON.stringify(data);
+                        var options = {
+                            dom: 'json_container' //对应容器的id
+                        };
+                        var jf = new JsonFormatter(options); //创建对象
+                        jf.doFormat(str_data);
+
+                        if (data["Header"]["Code"] != 0) {
+                            alert(data["Header"]["Message"]);
+                            return;
+                        }
+
+                        {#const webrtc_url = data["Payload"]["PlayStreamAddr"];#}
+                        {#startWebRTCStream(webrtc_url);#}
+
+                    } catch (e) {
+                        console.error("Error parsing JSON response:", e);
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX request failed: ", textStatus, errorThrown);
+                    $(".start_session").removeClass('loading');
+                    var info = "request failed";
+                    $("#dh_info p").html(info);
+                }
+            });
+        });
+
+        // 关闭会话
+        $(".close_session").click(function () {
+
+            var appkey = $("input[name=appkey]").val();
+            var access_token = $("input[name=access_token]").val();
+            var virtualmankey = $("input[name=virtualmankey]").val();
+            if (appkey == '' || access_token == '' || virtualmankey == '') {
+                alert("请输入appkey,access_token,virtualmankey");
+                return;
+            }
+
+            var sessionid = $("input[name=sessionid]").val();
+            if (sessionid == "") {
+                alert("sessionid不能为空");
+                return;
+            }
+
+            $(".close_session").addClass('loading');
+            $.ajax({
+                url: `${url_prefix}/backend-api/v2/close_session`,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    appkey: appkey,
+                    access_token: access_token,
+                    virtualmankey: virtualmankey,
+                    sessionid: sessionid,
+                }),
+                success: function (data) {
+                    console.log(data);
+                    $(".close_session").removeClass('loading');
+                    try {
+                        // jsonFormater show
+                        var str_data = JSON.stringify(data);
+                        var options = {
+                            dom: 'json_container' //对应容器的id
+                        };
+                        var jf = new JsonFormatter(options); //创建对象
+                        jf.doFormat(str_data);
+
+                        if (data["Header"]["Code"] != 0) {
+                            alert(data["Header"]["Message"]);
+                            return;
+                        }
+
+                        {#const webrtc_url = data["Payload"]["PlayStreamAddr"];#}
+                        {#startWebRTCStream(webrtc_url);#}
+
+                    } catch (e) {
+                        console.error("Error parsing JSON response:", e);
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX request failed: ", textStatus, errorThrown);
+                    $(".close_session").removeClass('loading');
+                    var info = "request failed";
+                    $("#dh_info p").html(info);
+                }
+            });
+        });
+
+        // 创建长链接
+        $(".create_ws").click(function () {
+
+            var appkey = $("input[name=appkey]").val();
+            var access_token = $("input[name=access_token]").val();
+            var virtualmankey = $("input[name=virtualmankey]").val();
+            if (appkey == '' || access_token == '' || virtualmankey == '') {
+                alert("请输入appkey,access_token,virtualmankey");
+                return;
+            }
+
+            var sessionid = $("input[name=sessionid]").val();
+            if (sessionid == "") {
+                alert("sessionid不能为空");
+                return;
+            }
+
+            $(".create_ws").addClass('loading');
+            $.ajax({
+                url: `${url_prefix}/backend-api/v2/create_ws`,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    appkey: appkey,
+                    access_token: access_token,
+                    virtualmankey: virtualmankey,
+                    sessionid: sessionid,
+                }),
+                success: function (data) {
+                    console.log(data);
+                    $(".create_ws").removeClass('loading');
+                    try {
+
+                        // jsonFormater show
+                        var str_data = JSON.stringify(data);
+                        var options = {
+                            dom: 'json_container' //对应容器的id
+                        };
+                        var jf = new JsonFormatter(options); //创建对象
+                        jf.doFormat(str_data);
+
+                        {#const webrtc_url = data["Payload"]["PlayStreamAddr"];#}
+                        {#startWebRTCStream(webrtc_url);#}
+
+                    } catch (e) {
+                        console.error("Error parsing JSON response:", e);
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX request failed: ", textStatus, errorThrown);
+                    $(".create_ws").removeClass('loading');
+                    var info = "request failed";
+                    $("#dh_info p").html(info);
+                }
+            });
+        });
+
+        // 文本驱动
+        $(".send_text").click(function () {
+
+            var appkey = $("input[name=appkey]").val();
+            var access_token = $("input[name=access_token]").val();
+            var virtualmankey = $("input[name=virtualmankey]").val();
+            if (appkey == '' || access_token == '' || virtualmankey == '') {
+                alert("请输入appkey,access_token,virtualmankey");
+                return;
+            }
+
+            var sessionid = $("input[name=sessionid]").val();
+            if (sessionid == "") {
+                alert("sessionid不能为空");
+                return;
+            }
+
+            var txt = $("textarea[name=txt]").val();
+            if (txt == "") {
+                alert("请输入文本");
+                return;
+            }
+
+            $(".send_text").addClass('loading');
+            $.ajax({
+                url: `${url_prefix}/backend-api/v2/dh_send_text`,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    appkey: appkey,
+                    access_token: access_token,
+                    virtualmankey: virtualmankey,
+                    sessionid: sessionid,
+                    text: txt,
+                }),
+                success: function (data) {
+                    console.log(data);
+                    $(".send_text").removeClass('loading');
+                    try {
+
+                        // jsonFormater show
+                        var str_data = JSON.stringify(data);
+                        var options = {
+                            dom: 'json_container' //对应容器的id
+                        };
+                        var jf = new JsonFormatter(options); //创建对象
+                        jf.doFormat(str_data);
+
+                    } catch (e) {
+                        console.error("Error parsing JSON response:", e);
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX request failed: ", textStatus, errorThrown);
+                    $(".send_text").removeClass('loading');
+                    var info = "request failed";
+                    $("#dh_info p").html(info);
+                }
+            });
+        });
+
+        // 音频驱动
+        $(".send_audio").click(function () {
+
+            var appkey = $("input[name=appkey]").val();
+            var access_token = $("input[name=access_token]").val();
+            var virtualmankey = $("input[name=virtualmankey]").val();
+            if (appkey == '' || access_token == '' || virtualmankey == '') {
+                alert("请输入appkey,access_token,virtualmankey");
+                return;
+            }
+
+            var sessionid = $("input[name=sessionid]").val();
+            if (sessionid == "") {
+                alert("sessionid不能为空");
+                return;
+            }
+
+            var tts_voice = $("input[name=tts_voice]").val();
+            var tts_model = $("input[name=tts_model]").val();
+            console.log(tts_voice)
+            console.log(tts_model)
+
+            var txt = $("textarea[name=txt]").val();
+            if (txt == "") {
+                alert("请输入文本");
+                return;
+            }
+
+            $(".send_audio").addClass('loading');
+            $.ajax({
+                url: `${url_prefix}/backend-api/v2/dh_send_audio`,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    appkey: appkey,
+                    access_token: access_token,
+                    virtualmankey: virtualmankey,
+                    sessionid: sessionid,
+                    tts_voice: tts_voice,
+                    tts_model: tts_model,
+                    text: txt,
+                }),
+                processData: false,
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (data) {
+                    console.log(data);
+                    $(".send_audio").removeClass('loading');
+                    try {
+                        var new_url = URL.createObjectURL(data);
+
+                        // jsonFormater show
+                        var str_data = JSON.stringify(data);
+                        var options = {
+                            dom: 'json_container' //对应容器的id
+                        };
+                        var jf = new JsonFormatter(options); //创建对象
+                        jf.doFormat(str_data);
+
+                        /*
+                        $("#tts_audio_id").attr('src', new_url);
+                        $("#tts_audio_id").get(0).load();
+                        $("#tts_audio_id").get(0).play();*/
+                    } catch (e) {
+                        console.error("Error parsing JSON response:", e);
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX request failed: ", textStatus, errorThrown);
+                    $(".send_audio").removeClass('loading');
+                    var info = "request failed";
+                    $("#dh_info p").html(info);
+                }
+            });
+        });
+    });
+</script>
+<script src="{{ url_for('bp.static', filename='js/icons.js') }}"></script>
+<script src="{{ url_for('bp.static', filename='js/markdown-it.min.js') }}"></script>
+</body>
+</html>

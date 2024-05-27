@@ -4,6 +4,7 @@ import openai
 from datetime import datetime
 from flask import request, url_for
 from werkzeug.utils import secure_filename
+from flask import Flask, jsonify
 from server.utils.imgbb import upload_bb
 from server.models.prompter import Prompter
 from server.models.asr import ASRGenerator
@@ -13,6 +14,7 @@ from server.models.llama2 import LLama2Generator
 from server.models.assistant import AssistantGenerator
 from server.models.qianfan import QianfanGenerator
 from server.models.corpus import CorpusGenerator
+from server.models.txdh import TXDHGenerator
 
 openai.api_key = os.environ.get("OPENAI_API_KEY_EASY")
 print(openai.api_key)
@@ -28,6 +30,8 @@ class Backend_Api:
         self.app = app
         self.bp = bp
         self.config = config
+        self.ws = None
+
         self.routes = {
             '/backend-api/v2/conversation': {
                 'function': self._conversation,
@@ -65,6 +69,38 @@ class Backend_Api:
                 'function': self._geshui_calc,
                 'methods': ['POST']
             },
+            '/backend-api/v2/create_session': {
+                'function': self._dh_create_session,
+                'methods': ['POST']
+            },
+            '/backend-api/v2/list_session': {
+                'function': self._dh_list_session,
+                'methods': ['POST']
+            },
+            '/backend-api/v2/detail_session': {
+                'function': self._dh_detail_session,
+                'methods': ['POST']
+            },
+            '/backend-api/v2/start_session': {
+                'function': self._dh_start_session,
+                'methods': ['POST']
+            },
+            '/backend-api/v2/close_session': {
+                'function': self._dh_close_session,
+                'methods': ['POST']
+            },
+            '/backend-api/v2/create_ws': {
+                'function': self._dh_create_ws,
+                'methods': ['POST']
+            },
+            '/backend-api/v2/dh_send_text': {
+                'function': self._dh_send_text,
+                'methods': ['POST']
+            },
+            '/backend-api/v2/dh_send_audio': {
+                'function': self._dh_send_audio,
+                'methods': ['POST']
+            }
         }
 
         llama2 = config['llama2']
@@ -108,6 +144,199 @@ class Backend_Api:
             sample_rate = int(request.json['sample_rate'])
             model = request.json['model']
             return TTSGenerator.generate_tts(text, voice, r_format, sample_rate, model)
+        except Exception as e:
+            print(e)
+            print(e.__traceback__.tb_next)
+            msg = {
+                '_action': '_ask',
+                'success': False,
+                "error": f"an error occurred {str(e)}"
+            }
+            return msg, 500002
+
+    def _dh_create_session(self):
+        """
+        create session
+        """
+        try:
+            print("create_session===================")
+            print(request.json)
+            appkey = request.json['appkey']
+            access_token = request.json['access_token']
+            virtualmankey = request.json['virtualmankey']
+
+            return TXDHGenerator.create_session(appkey, access_token, virtualmankey)
+        except Exception as e:
+            print(e)
+            print(e.__traceback__.tb_next)
+            msg = {
+                '_action': '_ask',
+                'success': False,
+                "error": f"an error occurred {str(e)}"
+            }
+            return msg, 500002
+
+    def _dh_list_session(self):
+        """
+        create session
+        """
+        try:
+            print("create_session===================")
+            print(request.json)
+            appkey = request.json['appkey']
+            access_token = request.json['access_token']
+            virtualmankey = request.json['virtualmankey']
+
+            return TXDHGenerator.list_session(appkey, access_token, virtualmankey)
+        except Exception as e:
+            print(e)
+            print(e.__traceback__.tb_next)
+            msg = {
+                '_action': '_ask',
+                'success': False,
+                "error": f"an error occurred {str(e)}"
+            }
+            return msg, 500002
+
+    def _dh_detail_session(self):
+        """
+        detail session
+        """
+        try:
+            print("detail_session===================")
+            print(request.json)
+            appkey = request.json['appkey']
+            access_token = request.json['access_token']
+            virtualmankey = request.json['virtualmankey']
+            sessionid = request.json['sessionid']
+
+            return TXDHGenerator.detail_session(appkey, access_token, sessionid)
+        except Exception as e:
+            print(e)
+            print(e.__traceback__.tb_next)
+            msg = {
+                '_action': '_ask',
+                'success': False,
+                "error": f"an error occurred {str(e)}"
+            }
+            return msg, 500002
+
+    def _dh_start_session(self):
+        """
+        start session
+        """
+        try:
+            print("start_session===================")
+            print(request.json)
+            appkey = request.json['appkey']
+            access_token = request.json['access_token']
+            virtualmankey = request.json['virtualmankey']
+            sessionid = request.json['sessionid']
+
+            return TXDHGenerator.start_session(appkey, access_token, sessionid)
+        except Exception as e:
+            print(e)
+            print(e.__traceback__.tb_next)
+            msg = {
+                '_action': '_ask',
+                'success': False,
+                "error": f"an error occurred {str(e)}"
+            }
+            return msg, 500002
+
+    def _dh_close_session(self):
+        """
+        close session
+        """
+        try:
+            print("close_session===================")
+            print(request.json)
+            appkey = request.json['appkey']
+            access_token = request.json['access_token']
+            virtualmankey = request.json['virtualmankey']
+            sessionid = request.json['sessionid']
+
+            return TXDHGenerator.close_session(appkey, access_token, sessionid)
+        except Exception as e:
+            print(e)
+            print(e.__traceback__.tb_next)
+            msg = {
+                '_action': '_ask',
+                'success': False,
+                "error": f"an error occurred {str(e)}"
+            }
+            return msg, 500002
+
+    def _dh_create_ws(self):
+        """
+        create session
+        """
+        try:
+            print("create_ws===================")
+            print(request.json)
+            appkey = request.json['appkey']
+            access_token = request.json['access_token']
+            virtualmankey = request.json['virtualmankey']
+            sessionid = request.json['sessionid']
+
+            ws = TXDHGenerator.create_ws(appkey, access_token, virtualmankey, sessionid)
+            self.ws = ws
+            print(ws)
+            return jsonify({"msg": "ws connected"})
+        except Exception as e:
+            print(e)
+            print(e.__traceback__.tb_next)
+            msg = {
+                '_action': '_ask',
+                'success': False,
+                "error": f"an error occurred {str(e)}"
+            }
+            return msg, 500002
+
+    def _dh_send_text(self):
+        """
+        create session
+        """
+        try:
+            print("send_text===================")
+            print(request.json)
+            appkey = request.json['appkey']
+            access_token = request.json['access_token']
+            virtualmankey = request.json['virtualmankey']
+            sessionid = request.json['sessionid']
+            text = request.json['text']
+
+            TXDHGenerator.send_text(appkey, access_token, sessionid, text)
+
+            return jsonify({"text": text})
+        except Exception as e:
+            print(e)
+            print(e.__traceback__.tb_next)
+            msg = {
+                '_action': '_ask',
+                'success': False,
+                "error": f"an error occurred {str(e)}"
+            }
+            return msg, 500002
+
+    def _dh_send_audio(self):
+        """
+        create session
+        """
+        try:
+            print("send_audio===================")
+            print(request.json)
+            appkey = request.json['appkey']
+            access_token = request.json['access_token']
+            virtualmankey = request.json['virtualmankey']
+            sessionid = request.json['sessionid']
+            voice = request.json['tts_voice']
+            model = request.json['tts_model']
+            text = request.json['text']
+
+            TXDHGenerator.send_audio(appkey, access_token, sessionid, text, voice, model)
+
+            return jsonify({"text": text})
         except Exception as e:
             print(e)
             print(e.__traceback__.tb_next)

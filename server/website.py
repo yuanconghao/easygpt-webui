@@ -27,12 +27,16 @@ class Website:
                 'function': self._prompt,
                 'methods': ['GET', 'POST']
             },
-            '/tts/': {
-                'function': self._tts,
+            '/dh/': {
+                'function': self._dh,
                 'methods': ['GET', 'POST']
             },
             '/asr/': {
                 'function': self._asr,
+                'methods': ['GET', 'POST']
+            },
+            '/tts/': {
+                'function': self._tts,
                 'methods': ['GET', 'POST']
             },
             '/teacher/': {
@@ -97,6 +101,10 @@ class Website:
     def _asr(self):
         print("asr=========")
         return render_template('asr.html', url_prefix=self.url_prefix)
+
+    def _dh(self):
+        print("dh=========")
+        return render_template('dh.html', url_prefix=self.url_prefix)
 
     def _teacher(self):
         print("teacher=========")
