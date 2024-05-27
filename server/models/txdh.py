@@ -364,7 +364,7 @@ class TXDHGenerator:
     def send_audio(appkey, access_token, sessionid, text, voice, model):
 
         # 先调用openai 获取tts stream
-        audio_stream = TTSGenerator.generate_tts_stream_16(text, voice, 'mp3', model)
+        audio_stream = TTSGenerator.generate_tts_stream_16(text, voice, 'pcm', model)
         print("send_audio====================")
         print(audio_stream)
 
@@ -442,7 +442,6 @@ class TXDHGenerator:
                 ws.send(json.dumps(audio_command))
                 print(ws.recv())
                 #time.sleep(0.12)
-                time.sleep(0.14)  # 140ms delay to ensure the interval is within [120ms, 160ms]
 
         except websocket.WebSocketException as e:
             print(f"websocket error: {e}")
