@@ -459,9 +459,6 @@ class TXDHGenerator:
                 ws.send(json.dumps(audio_command))
                 print(ws.recv())
 
-                # Add a delay between sending chunks to control the sending rate
-                time.sleep(0.14)  # 140ms delay to ensure the interval is within [120ms, 160ms]
-
                 seq += 1  # 增加序列号
 
         except websocket.WebSocketException as e:
