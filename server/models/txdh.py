@@ -391,43 +391,51 @@ class TXDHGenerator:
             print("ws connected")
 
             # Read the audio data from the byte stream
-            audio_data = audio_stream.read()
-            # audio_base64 = base64.b64encode(audio_data).decode('utf-8')
-            # # 构建发送音频的指令
-            # audio_command = {
-            #     "Header": {},
-            #     "Payload": {
-            #         "ReqId": req_id,  # 生成一个唯一的ReqId
-            #         "SessionId": sessionid,  # 会话唯一标识
-            #         "Command": "SEND_AUDIO",  # 指定命令类型为发送文本
-            #         "Data": {
-            #             "Audio": audio_base64,
-            #             "Seq": 1,
-            #             "IsFinal": True
+            # audio_data = audio_stream.read()
+
+
+            # chunk_size = 5120
+
+            # # Step 1: Split the raw audio bytes into chunks of specified size
+            # raw_chunks = [audio_data[i:i + chunk_size] for i in range(0, len(audio_data), chunk_size)]
+
+            # # Step 2: Encode each chunk to Base64 and send
+            # for i, raw_chunk in enumerate(raw_chunks):
+            #     base64_encoded_chunk = base64.b64encode(raw_chunk).decode('utf-8')
+            #     # print(f"Chunk {i + 1}: {base64_encoded_chunk}")
+            #     print(f"Chunk {i + 1}")
+
+            #     isFinal = (i == len(raw_chunks) - 1)
+            #     # 构建发送音频的指令
+            #     audio_command = {
+            #         "Header": {},
+            #         "Payload": {
+            #             "ReqId": req_id,  # 生成一个唯一的ReqId
+            #             "SessionId": sessionid,  # 会话唯一标识
+            #             "Command": "SEND_AUDIO",  # 指定命令类型为发送文本
+            #             "Data": {
+            #                 "Audio": base64_encoded_chunk,
+            #                 "Seq": i + 1,
+            #                 "IsFinal": isFinal
+            #             }
             #         }
             #     }
-            # }
-            # # 发送音频驱动指令
-            # ws.send(json.dumps(audio_command))
-            # print(ws.recv())
+            #     # 发送音频驱动指令
+            #     ws.send(json.dumps(audio_command))
+            #     print(ws.recv())
+                #time.sleep(0.12)
 
+            chunk_size = 512  # 每次读取512字节
+            seq = 1  # 初始化序列号
 
-            chunk_size = 5120
+            while True:
+                audio_chunk = audio_stream.read(chunk_size)
+                if not audio_chunk:
+                    break  # 如果没有更多数据，则退出循环
 
-            # Step 1: Split the raw audio bytes into chunks of specified size
-            #raw_chunks = [audio_data[i:i + chunk_size] for i in range(0, len(audio_data), chunk_size)]
+                base64_encoded_chunk = base64.b64encode(audio_chunk).decode('utf-8')
+                print(f"Chunk {seq}")
 
-            # Step 2: Encode each chunk to Base64 and send
-            # for i, raw_chunk in enumerate(raw_chunks):
-            i = 0
-            for i in range(0, len(audio_data), chunk_size):
-                raw_chunk = audio_data[i:i+chunk_size]
-                i=i+1
-                base64_encoded_chunk = base64.b64encode(raw_chunk).decode('utf-8')
-                # print(f"Chunk {i + 1}: {base64_encoded_chunk}")
-                print(f"Chunk {i}")
-
-                isFinal = (len(raw_chunk) < chunk_size)
                 # 构建发送音频的指令
                 audio_command = {
                     "Header": {},
@@ -437,15 +445,24 @@ class TXDHGenerator:
                         "Command": "SEND_AUDIO",  # 指定命令类型为发送文本
                         "Data": {
                             "Audio": base64_encoded_chunk,
-                            "Seq": i + 1,
-                            "IsFinal": isFinal
+                            "Seq": seq,
+                            "IsFinal": False  # 默认不是最后一块
                         }
                     }
                 }
+
+                # 如果是最后一块数据，设置IsFinal为True
+                if len(audio_chunk) < chunk_size:
+                    audio_command["Payload"]["Data"]["IsFinal"] = True
+
                 # 发送音频驱动指令
                 ws.send(json.dumps(audio_command))
                 print(ws.recv())
-                #time.sleep(0.12)
+
+                # Add a delay between sending chunks to control the sending rate
+                time.sleep(0.14)  # 140ms delay to ensure the interval is within [120ms, 160ms]
+
+                seq += 1  # 增加序列号
 
         except websocket.WebSocketException as e:
             print(f"websocket error: {e}")
