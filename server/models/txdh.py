@@ -421,6 +421,7 @@ class TXDHGenerator:
             for i, raw_chunk in enumerate(raw_chunks):
                 base64_encoded_chunk = base64.b64encode(raw_chunk).decode('utf-8')
                 # print(f"Chunk {i + 1}: {base64_encoded_chunk}")
+                print(f"Chunk {i + 1}")
 
                 isFinal = (i == len(raw_chunks) - 1)
                 # 构建发送音频的指令
@@ -441,6 +442,7 @@ class TXDHGenerator:
                 ws.send(json.dumps(audio_command))
                 print(ws.recv())
                 #time.sleep(0.12)
+                time.sleep(0.14)  # 140ms delay to ensure the interval is within [120ms, 160ms]
 
         except websocket.WebSocketException as e:
             print(f"websocket error: {e}")
