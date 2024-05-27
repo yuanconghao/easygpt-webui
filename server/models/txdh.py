@@ -458,6 +458,7 @@ class TXDHGenerator:
                 # 发送音频驱动指令
                 ws.send(json.dumps(audio_command))
                 print(ws.recv())
+                time.sleep(0.12)
 
                 seq += 1  # 增加序列号
 
