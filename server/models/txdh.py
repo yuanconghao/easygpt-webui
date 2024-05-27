@@ -412,7 +412,7 @@ class TXDHGenerator:
             # print(ws.recv())
 
 
-            chunk_size = 10000
+            chunk_size = 5120
 
             # Step 1: Split the raw audio bytes into chunks of specified size
             raw_chunks = [audio_data[i:i + chunk_size] for i in range(0, len(audio_data), chunk_size)]
