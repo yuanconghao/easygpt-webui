@@ -14,21 +14,12 @@ class GPTGenerator:
         """
         response = openai.chat.completions.create(
             model=model,
-            messages=messages,
-            max_completion_tokens=4096,
-            stream=stream,
+            messages=messages
         )
         print("response==================")
         print(response)
-        if stream:
-            return GPTGenerator.compact_response(response)
 
         answer = response.choices[0].message.content
-
-        result = {
-            "id": "",
-            "content": answer
-        }
         return Response(answer)
 
     @staticmethod
