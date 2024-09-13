@@ -8,6 +8,31 @@ from typing import Generator, Union
 class GPTGenerator:
 
     @staticmethod
+    def request_o(model, messages, stream):
+        """
+        request o1
+        """
+        response = openai.chat.completions.create(
+            model=model,
+            messages=messages,
+            temperature=0.5,
+            max_completion_tokens=4096,
+            stream=stream,
+        )
+        print("response==================")
+        print(response)
+        if stream:
+            return GPTGenerator.compact_response(response)
+
+        answer = response.choices[0].message.content
+
+        result = {
+            "id": "",
+            "content": answer
+        }
+        return Response(answer)
+
+    @staticmethod
     def request_gpt(model, messages, stream):
         """
         request gpt

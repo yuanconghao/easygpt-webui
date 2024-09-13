@@ -475,6 +475,9 @@ class Backend_Api:
             elif model == "gpt-assistant-ai-teacher":
                 print("assistant=================")
                 return AssistantGenerator.request_assitant(model, messages, session_id)
+            elif model.startswith("o1-"):
+                print("gpt o===============")
+                return GPTGenerator.request_o(model, messages, stream)
             else:
                 print("gpt===============")
                 return GPTGenerator.request_gpt(model, messages, stream)
