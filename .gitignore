@@ -13,3 +13,4 @@ translations
 translations/*
 translations/*/*
 translations/*/*/*.mo
+.DS_Store
